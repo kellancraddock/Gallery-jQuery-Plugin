@@ -8,81 +8,66 @@
 	<script type="text/javascript" src="js/jquery.gallery.js"></script>
 	<script type="text/javascript">
 		$(function() {
-			/* Rough concept for a Gallery type plugin 
-			   Author: Kellan Craddock
-			   Date: 5/26/10
-			   Notes: Feel free to modify as needed.
-				
-			*/
-			
-			//Initialize gallyer for project index view
-			//{scope: '#content.project-content.index', root: '#timeline-wrapper', items: '#timeline li', itemOffset: 5, controls: {root: '#controls', forward: '.forward', back: '.back', customItems: '.project', updateText: '#project-name'} }
-			
-			var gallery = new Gallery();
-			//Constructed with the minimum params
-			gallery.construct({scope: '#wrapper', root: '.col2', items: '.fontChicletList li', itemOffset: 2});
+			//Option Defaults - {itemsVisible: 3, itemOffset: 1, draggable: true}
+			$('.gallery').gallery();
 		});
 	</script>
 </head>
 
 <body>
 
-	<div id="wrapper">
-		<div class="col2">
-			<ul class="fontChicletList">
-				<li>
-					<h5>1</h5>
-					<p>Didot Regular</p>
-					<a class="deleteBtn" href="#">delete</a>
-				</li>
-				<li>
-					<h5>2</h5>
-					<p>Didot Regular</p>
-					<a class="deleteBtn" href="#">delete</a>
-				</li>
-				<li>
-					<h5>3</h5>
-					<p>Didot Regular</p>
-					<a class="deleteBtn" href="#">delete</a>
-				</li>
-				<li>
-					<h5>4</h5>
-					<p>Didot Regular</p>
-					<a class="deleteBtn" href="#">delete</a>
-				</li>
-				<li>
-					<h5>5</h5>
-					<p>Didot Regular</p>
-					<a class="deleteBtn" href="#">delete</a>
-				</li>
-				<li>
-					<h5>6</h5>
-					<p>Didot Regular</p>
-					<a class="deleteBtn" href="#">delete</a>
-				</li>
-				<li>
-					<h5>7</h5>
-					<p>Didot Regular</p>
-					<a class="deleteBtn" href="#">delete</a>
-				</li>
-				<li>
-					<h5>8</h5>
-					<p>Didot Regular</p>
-					<a class="deleteBtn" href="#">delete</a>
-				</li>
-				<li>
-					<h5>9</h5>
-					<p>Didot Regular</p>
-					<a class="deleteBtn" href="#">delete</a>
-				</li>
-				<li>
-					<h5>10</h5>
-					<p>Didot Regular</p>
-					<a class="deleteBtn" href="#">delete</a>
-				</li>
-			</ul>
-		</div>
-	</div>
+	<ul class="gallery">
+		<li>
+			<h5>1</h5>
+			<p>Didot Regular</p>
+			<a class="deleteBtn" href="#">delete</a>
+		</li>
+		<li>
+			<h5>2</h5>
+			<p>Didot Regular</p>
+			<a class="deleteBtn" href="#">delete</a>
+		</li>
+		<li>
+			<h5>3</h5>
+			<p>Didot Regular</p>
+			<a class="deleteBtn" href="#">delete</a>
+		</li>
+		<li>
+			<h5>4</h5>
+			<p>Didot Regular</p>
+			<a class="deleteBtn" href="#">delete</a>
+		</li>
+		<li>
+			<h5>5</h5>
+			<p>Didot Regular</p>
+			<a class="deleteBtn" href="#">delete</a>
+		</li>
+		<li>
+			<h5>6</h5>
+			<p>Didot Regular</p>
+			<a class="deleteBtn" href="#">delete</a>
+		</li>
+		<li>
+			<h5>7</h5>
+			<p>Didot Regular</p>
+			<a class="deleteBtn" href="#">delete</a>
+		</li>
+		<li>
+			<h5>8</h5>
+			<p>Didot Regular</p>
+			<a class="deleteBtn" href="#">delete</a>
+		</li>
+		<li>
+			<h5>9</h5>
+			<p>Didot Regular</p>
+			<a class="deleteBtn" href="#">delete</a>
+		</li>
+		<li>
+			<h5>10</h5>
+			<p>Didot Regular</p>
+			<a class="deleteBtn" href="#">delete</a>
+		</li>
+	</ul>
 	
 </body>
 </html>
