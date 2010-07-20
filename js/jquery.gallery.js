@@ -4,109 +4,139 @@
 * Author: Kellan Craddock
 * Email: kellancraddock@gmail.com
 */
+
+//NOTES - add functionality to slide to a specific slide (number) then allow for a call back that fires on slide move.
+
 (function($) {
-	
+
 	//Create plugin obj
 	$.fn.gallery = function(options) {
-		//Extend the default option obj
-		$.fn.gallery.options = $.extend({}, $.fn.gallery.defaults, options);
-
 		return this.each(function(i) {
-			$.fn.gallery.init(this, i);
+			$.fn.gallery.createInstance($(this), options);
 		});
 	}
 	
-	//Set up default options
-	$.fn.gallery.defaults = {
-		itemsVisible: 3,
-		itemOffset: 1,
-		draggable: true
+	//Acuire an instance of the plugin
+	$.fn.gallery.createInstance = function(element, options) {
+		if (element.data('gallery')) {
+			//Existing Instance
+			return element;
+		} else {
+			//New Instance
+			var instance = new $.fn.gallery.instance(element, options);
+			element.data('gallery').init(element, options);
+			return element;
+		}
 	}
-	
-	$.fn.gallery.init = function(gallery, i) {
-		//Set up default states
-		var galleryWidth = $('li', gallery).length * $('li', gallery).eq(0).outerWidth(true);
-		var viewBoxWidth = $.fn.gallery.options.itemsVisible * $('li', gallery).eq(0).outerWidth(true);
-		var class = 'galleryWrapper' + i;
-	
-		$(gallery).wrap('<div class="' + class + '" />').css({'width': galleryWidth});
-		$('.' + class).css({'width': viewBoxWidth, 'overflow-x': 'hidden'});
-		
-		$('li', gallery).eq(0).addClass('active');
-		
-		//Bind default click to items
-		$('li', gallery).bind('click', function() {
-			$.fn.gallery.setItem($(this), gallery);
-			return false;
-		});
-		
-		if ($.fn.gallery.options.draggable) { $.fn.gallery.setDraggable(gallery); }
-	}
-	
-	$.fn.gallery.setItem = function(element, gallery) {
-		
-		$('li', gallery).removeClass('active');
 
-		element.addClass('active');
-	
-		//$(self.controls.updateText).text(element.children('a').attr('href').replace('#', ''));
-		$.fn.gallery.slideLeft($.fn.gallery.options.itemOffset, gallery);
-	}
-	
-	$.fn.gallery.setDraggable = function(gallery) {
-		$('li', gallery).css('cursor', 'move') //Setup default states
-		$(gallery).bind('mousedown', function(e) { //Bind mousedown to parent of items
-			e.preventDefault();
-			var initMousePos = e.pageX;
-			var initGalleryMargin = 1 * $(gallery).css('marginLeft').replace('px', '');
+	//Instance
+	$.fn.gallery.instance = function(element, options) {
+		var self = this;
+		
+		//Defaults
+		this.defaults = {
+			itemsVisible: 3,
+			itemOffset: 1,
+			draggable: true
+		}
+		
+		//Extend the default options obj
+		this.options = $.extend({}, self.defaults, options);
+		
+		//Init (construct) function
+		this.init = function(element) {
+			//Set up default states
+			var gallery = element;
+			var galleryWidth = $('li', gallery).length * $('li', gallery).eq(0).outerWidth(true);
+			var viewBoxWidth = self.options.itemsVisible * $('li', gallery).eq(0).outerWidth(true);
+			var class = 'galleryWrapper';
+		
+			$(gallery).wrap('<div class="' + class + '" />').css({'width': galleryWidth});
+			$(gallery).parent('.' + class).css({'width': viewBoxWidth, 'overflow-x': 'hidden'});
 			
+			$('li', gallery).eq(0).addClass('active');
 			
-			$(gallery).bind('mousemove', function(e) {
-				var margin = e.pageX - initMousePos;
-				$.fn.gallery.drag(initGalleryMargin, margin, gallery);
+			//Bind default click to items
+			$('li', gallery).bind('click', function() {
+				self.setItem($(this), gallery);
+				return false;
 			});
 			
-			$('html').bind('mouseup', function() {
-				$(gallery).unbind('mousemove');
+			if (self.options.draggable) { self.setDraggable(gallery); }
+		}
+		
+		//setItem method- resets the active item
+		this.setItem = function(element, gallery) {
+		
+			$('li', gallery).removeClass('active');
+	
+			element.addClass('active');
+		
+			//$(self.controls.updateText).text(element.children('a').attr('href').replace('#', ''));
+			self.slideLeft(self.options.itemOffset, gallery);
+		}
+		
+		//slideLeft- slides to the currently active item
+		this.slideLeft = function(offset, gallery) {
+			var items;
+			var margin;
+			var prevItems = $(' .active', gallery).prevAll('li').length;
+			
+			if (offset) {
+				margin = (prevItems - offset) * $('li', gallery).eq(0).outerWidth(true);
+			} else {
+				margin = prevItems * $('li', gallery).eq(0).outerWidth(true);
+			} if (margin > 0) {
+				margin = '-' + Math.abs(margin) + 'px';
+			} else {
+				margin = '+' + Math.abs(margin) + 'px';
+			}
+				
+			$(gallery).animate({
+			    marginLeft: margin
+			}, 500, function() {
+			    // Animation complete.
 			});
-		});
-	}
-	
-	$.fn.gallery.slideLeft = function(offset, gallery) {
-		var items;
-		var margin;
-		var prevItems = $(' .active', gallery).prevAll('li').length;
-		
-		if (offset) {
-			margin = (prevItems - offset) * $('li', gallery).eq(0).outerWidth(true);
-		} else {
-			margin = prevItems * $('li', gallery).eq(0).outerWidth(true);
-		} if (margin > 0) {
-			margin = '-' + Math.abs(margin) + 'px';
-		} else {
-			margin = '+' + Math.abs(margin) + 'px';
+				
 		}
-			
-		$(gallery).animate({
-		    marginLeft: margin
-		}, 500, function() {
-		    // Animation complete.
-		});
-			
-	}
-	
-	$.fn.gallery.drag = function(initGalleryMargin, margin, gallery) {
-		//Move the gallery based on the mouse pos
-		var newMargin;
-		if (margin > 0) {
-			newMargin = (initGalleryMargin + margin) + 'px';
-		} else if ( initGalleryMargin >= 0 ) {
-			newMargin = (initGalleryMargin + margin) + 'px';
-		} else {
-			newMargin = "-" + Math.abs(initGalleryMargin + margin) + 'px';
-		}
-		$(gallery).css('marginLeft', newMargin);
-	}
 		
+		//setDraggable- binds all dragging functionality
+		this.setDraggable = function(gallery) {
+			$('li', gallery).css('cursor', 'move'); //Setup default states
+			$(gallery).bind('mousedown', function(e) { //Bind mousedown to parent of items
+				e.preventDefault();
+				var initMousePos = e.pageX;
+				var initGalleryMargin = 1 * $(gallery).css('marginLeft').replace('px', '');
+				
+				
+				$(gallery).bind('mousemove', function(e) {
+					var margin = e.pageX - initMousePos;
+					self.drag(initGalleryMargin, margin, gallery);
+				});
+				
+				$('html').bind('mouseup', function() {
+					$(gallery).unbind('mousemove');
+				});
+			});
+		}
+		
+		//drag- starts drag functionality via css left margin
+		this.drag = function(initGalleryMargin, margin, gallery) {
+			//Move the gallery based on the mouse pos
+			var newMargin;
+			if (margin > 0) {
+				newMargin = (initGalleryMargin + margin) + 'px';
+			} else if ( initGalleryMargin >= 0 ) {
+				newMargin = (initGalleryMargin + margin) + 'px';
+			} else {
+				newMargin = "-" + Math.abs(initGalleryMargin + margin) + 'px';
+			}
+			$(gallery).css('marginLeft', newMargin);
+		}
+		
+		//Set the instance to the elements data
+		element.data('gallery', this);
+	
+	}
 	
 })(jQuery);
