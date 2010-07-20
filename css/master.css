@@ -32,7 +32,11 @@ object { display: block; }
 	float: left;
 }
 
-.gallery2 tr {
-	width: 300px;
+.gallery2 tr, .gallery3 tr {
+	width: 100px;
 	float: left;
+}
+
+.active {
+	background: red;
 }

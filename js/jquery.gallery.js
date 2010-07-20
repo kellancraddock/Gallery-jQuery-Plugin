@@ -32,13 +32,14 @@
 	//Instance
 	$.fn.gallery.instance = function(element, options) {
 		var self = this;
-		
+		this.gallery;
 		//Defaults
 		this.defaults = {
 			items: 'li',
 			itemsVisible: 3,
 			itemsOffset: 1,
-			draggable: true
+			draggable: true,
+			onItemSet: function() {}
 		}
 		
 		//Extend the default options obj
@@ -47,53 +48,57 @@
 		//Init (construct) function
 		this.init = function(element) {
 			//Set up default states
-			var gallery = element;
-			var galleryWidth = $(self.options.items, gallery).length * $(self.options.items, gallery).eq(0).outerWidth(true);
-			var viewBoxWidth = self.options.itemsVisible * $(self.options.items, gallery).eq(0).outerWidth(true);
+			self.gallery = element;
+			var galleryWidth = $(self.options.items, self.gallery).length * $(self.options.items, self.gallery).eq(0).outerWidth(true);
+			var viewBoxWidth = self.options.itemsVisible * $(self.options.items, self.gallery).eq(0).outerWidth(true);
 			var class = 'galleryWrapper';
 		
-			$(gallery).wrap('<div class="' + class + '" />').css({'width': galleryWidth});
-			$(gallery).parent('.' + class).css({'width': viewBoxWidth, 'overflow-x': 'hidden'});
+			$(self.gallery).wrap('<div class="' + class + '" />').css({'width': galleryWidth});
+			$(self.gallery).parent('.' + class).css({'width': viewBoxWidth, 'overflow-x': 'hidden'});
 			
-			$(self.options.items, gallery).eq(0).addClass('active');
+			$(self.options.items, self.gallery).eq(0).addClass('active');
 			
 			//Bind default click to items
-			$(self.options.items, gallery).bind('click', function() {
-				self.setItem($(this), gallery);
+			$(self.options.items, self.gallery).bind('click', function() {
+				self.setItem($(this));
 				return false;
 			});
 			
-			if (self.options.draggable) { self.setDraggable(gallery); }
+			if (self.options.draggable) { self.setDraggable(); }
 		}
 		
 		//setItem method- resets the active item
-		this.setItem = function(element, gallery) {
+		this.setItem = function(element) {
+			//Check if 'element' is a number, string, or jquery object then find the correct item
+			var element = (isNaN(element)) ? element : $(self.options.items, self.gallery).eq(element);
+			//onItemSet Callback
+			self.options.onItemSet(element, self.gallery);
 		
-			$(self.options.items, gallery).removeClass('active');
+			$(self.options.items, self.gallery).removeClass('active');
 	
 			element.addClass('active');
-		
+			
 			//$(self.controls.updateText).text(element.children('a').attr('href').replace('#', ''));
-			self.slideLeft(self.options.itemsOffset, gallery);
+			self.slideLeft(self.options.itemsOffset);
 		}
 		
 		//slideLeft- slides to the currently active item
-		this.slideLeft = function(offset, gallery) {
+		this.slideLeft = function(offset) {
 			var items;
 			var margin;
-			var prevItems = $(' .active', gallery).prevAll(self.options.items).length;
+			var prevItems = $(' .active', self.gallery).prevAll(self.options.items).length;
 			
 			if (offset) {
-				margin = (prevItems - offset) * $(self.options.items, gallery).eq(0).outerWidth(true);
+				margin = (prevItems - offset) * $(self.options.items, self.gallery).eq(0).outerWidth(true);
 			} else {
-				margin = prevItems * $(self.options.items, gallery).eq(0).outerWidth(true);
+				margin = prevItems * $(self.options.items, self.gallery).eq(0).outerWidth(true);
 			} if (margin > 0) {
 				margin = '-' + Math.abs(margin) + 'px';
 			} else {
 				margin = '+' + Math.abs(margin) + 'px';
 			}
 				
-			$(gallery).animate({
+			$(self.gallery).animate({
 			    marginLeft: margin
 			}, 500, function() {
 			    // Animation complete.
@@ -102,27 +107,27 @@
 		}
 		
 		//setDraggable- binds all dragging functionality
-		this.setDraggable = function(gallery) {
-			$(self.options.items, gallery).css('cursor', 'move'); //Setup default states
-			$(gallery).bind('mousedown', function(e) { //Bind mousedown to parent of items
+		this.setDraggable = function() {
+			$(self.options.items, self.gallery).css('cursor', 'move'); //Setup default states
+			$(self.gallery).bind('mousedown', function(e) { //Bind mousedown to parent of items
 				e.preventDefault();
 				var initMousePos = e.pageX;
-				var initGalleryMargin = 1 * $(gallery).css('marginLeft').replace('px', '');
+				var initGalleryMargin = 1 * $(self.gallery).css('marginLeft').replace('px', '');
 				
 				
-				$(gallery).bind('mousemove', function(e) {
+				$(self.gallery).bind('mousemove', function(e) {
 					var margin = e.pageX - initMousePos;
-					self.drag(initGalleryMargin, margin, gallery);
+					self.drag(initGalleryMargin, margin);
 				});
 				
 				$('html').bind('mouseup', function() {
-					$(gallery).unbind('mousemove');
+					$(self.gallery).unbind('mousemove');
 				});
 			});
 		}
 		
 		//drag- starts drag functionality via css left margin
-		this.drag = function(initGalleryMargin, margin, gallery) {
+		this.drag = function(initGalleryMargin, margin) {
 			//Move the gallery based on the mouse pos
 			var newMargin;
 			if (margin > 0) {
@@ -132,7 +137,12 @@
 			} else {
 				newMargin = "-" + Math.abs(initGalleryMargin + margin) + 'px';
 			}
-			$(gallery).css('marginLeft', newMargin);
+			$(self.gallery).css('marginLeft', newMargin);
+		}
+		
+		//getActive - return the currently active gallery item
+		this.getActive = function() {
+			return $('.active', self.gallery);
 		}
 		
 		//Set the instance to the elements data

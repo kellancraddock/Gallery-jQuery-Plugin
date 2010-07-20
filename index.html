@@ -8,9 +8,16 @@
 	<script type="text/javascript" src="js/jquery.gallery.js"></script>
 	<script type="text/javascript">
 		$(function() {
-			//Option Defaults - {items: 'li', itemsVisible: 3, itemOffset: 1, draggable: true}
-			$('.gallery').gallery();
-			$('.gallery2').gallery({items: 'tr'});
+			//Option Defaults - {items: 'li', itemsVisible: 3, itemOffset: 1, draggable: true, onItemSet: function(){} }
+			$('.gallery2, .gallery3').gallery({items: 'tr', draggable: false});
+			$('.gallery').gallery({
+				onItemSet: function(element, gallery) {
+					var slideLocation = $(element, gallery).prevAll().length;
+					$('.gallery2, .gallery3').each(function() {
+						$(this).data('gallery').setItem(slideLocation);
+					});
+				}
+			});
 		});
 	</script>
 </head>
@@ -43,49 +50,69 @@
 			<p>Didot Regular</p>
 			<a class="deleteBtn" href="#">delete</a>
 		</li>
-		<li>
-			<h5>6</h5>
-			<p>Didot Regular</p>
-			<a class="deleteBtn" href="#">delete</a>
-		</li>
-		<li>
-			<h5>7</h5>
-			<p>Didot Regular</p>
-			<a class="deleteBtn" href="#">delete</a>
-		</li>
-		<li>
-			<h5>8</h5>
-			<p>Didot Regular</p>
-			<a class="deleteBtn" href="#">delete</a>
-		</li>
-		<li>
-			<h5>9</h5>
-			<p>Didot Regular</p>
-			<a class="deleteBtn" href="#">delete</a>
-		</li>
-		<li>
-			<h5>10</h5>
-			<p>Didot Regular</p>
-			<a class="deleteBtn" href="#">delete</a>
-		</li>
 	</ul>
 	
 	
 	<table class="gallery2">
 		<tr class="first">
-			<th>Print, Scan, Copy</th>
+			<th>1 Print, Scan, Copy</th>
 			<td>no</td>
 			<td>yes</td>
 			<td>yes</td>
 		</tr>
 		<tr>
-			<th>Print, Scan, Copy</th>
+			<th>2 Print, Scan, Copy</th>
 			<td>no</td>
 			<td>yes</td>
 			<td>yes</td>
 		</tr>
 		<tr>
-			<th>Print, Scan, Copy</th>
+			<th>3 Print, Scan, Copy</th>
+			<td>no</td>
+			<td>yes</td>
+			<td>yes</td>
+		</tr>
+		<tr>
+			<th>4 Print, Scan, Copy</th>
+			<td>no</td>
+			<td>yes</td>
+			<td>yes</td>
+		</tr>
+		<tr>
+			<th>5 Print, Scan, Copy</th>
+			<td>no</td>
+			<td>yes</td>
+			<td>yes</td>
+		</tr>
+	</table>
+	
+	<table class="gallery3">
+		<tr class="first">
+			<th>1 Print, Scan, Copy</th>
+			<td>no</td>
+			<td>yes</td>
+			<td>yes</td>
+		</tr>
+		<tr>
+			<th>2 Print, Scan, Copy</th>
+			<td>no</td>
+			<td>yes</td>
+			<td>yes</td>
+		</tr>
+		<tr>
+			<th>3 Print, Scan, Copy</th>
+			<td>no</td>
+			<td>yes</td>
+			<td>yes</td>
+		</tr>
+		<tr>
+			<th>4 Print, Scan, Copy</th>
+			<td>no</td>
+			<td>yes</td>
+			<td>yes</td>
+		</tr>
+		<tr>
+			<th>5 Print, Scan, Copy</th>
 			<td>no</td>
 			<td>yes</td>
 			<td>yes</td>
