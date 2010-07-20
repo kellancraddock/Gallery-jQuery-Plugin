@@ -8,8 +8,9 @@
 	<script type="text/javascript" src="js/jquery.gallery.js"></script>
 	<script type="text/javascript">
 		$(function() {
-			//Option Defaults - {itemsVisible: 3, itemOffset: 1, draggable: true}
+			//Option Defaults - {items: 'li', itemsVisible: 3, itemOffset: 1, draggable: true}
 			$('.gallery').gallery();
+			$('.gallery2').gallery({items: 'tr'});
 		});
 	</script>
 </head>
@@ -68,6 +69,28 @@
 			<a class="deleteBtn" href="#">delete</a>
 		</li>
 	</ul>
+	
+	
+	<table class="gallery2">
+		<tr class="first">
+			<th>Print, Scan, Copy</th>
+			<td>no</td>
+			<td>yes</td>
+			<td>yes</td>
+		</tr>
+		<tr>
+			<th>Print, Scan, Copy</th>
+			<td>no</td>
+			<td>yes</td>
+			<td>yes</td>
+		</tr>
+		<tr>
+			<th>Print, Scan, Copy</th>
+			<td>no</td>
+			<td>yes</td>
+			<td>yes</td>
+		</tr>
+	</table>
 	
 </body>
 </html>

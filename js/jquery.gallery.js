@@ -35,8 +35,9 @@
 		
 		//Defaults
 		this.defaults = {
+			items: 'li',
 			itemsVisible: 3,
-			itemOffset: 1,
+			itemsOffset: 1,
 			draggable: true
 		}
 		
@@ -47,17 +48,17 @@
 		this.init = function(element) {
 			//Set up default states
 			var gallery = element;
-			var galleryWidth = $('li', gallery).length * $('li', gallery).eq(0).outerWidth(true);
-			var viewBoxWidth = self.options.itemsVisible * $('li', gallery).eq(0).outerWidth(true);
+			var galleryWidth = $(self.options.items, gallery).length * $(self.options.items, gallery).eq(0).outerWidth(true);
+			var viewBoxWidth = self.options.itemsVisible * $(self.options.items, gallery).eq(0).outerWidth(true);
 			var class = 'galleryWrapper';
 		
 			$(gallery).wrap('<div class="' + class + '" />').css({'width': galleryWidth});
 			$(gallery).parent('.' + class).css({'width': viewBoxWidth, 'overflow-x': 'hidden'});
 			
-			$('li', gallery).eq(0).addClass('active');
+			$(self.options.items, gallery).eq(0).addClass('active');
 			
 			//Bind default click to items
-			$('li', gallery).bind('click', function() {
+			$(self.options.items, gallery).bind('click', function() {
 				self.setItem($(this), gallery);
 				return false;
 			});
@@ -68,24 +69,24 @@
 		//setItem method- resets the active item
 		this.setItem = function(element, gallery) {
 		
-			$('li', gallery).removeClass('active');
+			$(self.options.items, gallery).removeClass('active');
 	
 			element.addClass('active');
 		
 			//$(self.controls.updateText).text(element.children('a').attr('href').replace('#', ''));
-			self.slideLeft(self.options.itemOffset, gallery);
+			self.slideLeft(self.options.itemsOffset, gallery);
 		}
 		
 		//slideLeft- slides to the currently active item
 		this.slideLeft = function(offset, gallery) {
 			var items;
 			var margin;
-			var prevItems = $(' .active', gallery).prevAll('li').length;
+			var prevItems = $(' .active', gallery).prevAll(self.options.items).length;
 			
 			if (offset) {
-				margin = (prevItems - offset) * $('li', gallery).eq(0).outerWidth(true);
+				margin = (prevItems - offset) * $(self.options.items, gallery).eq(0).outerWidth(true);
 			} else {
-				margin = prevItems * $('li', gallery).eq(0).outerWidth(true);
+				margin = prevItems * $(self.options.items, gallery).eq(0).outerWidth(true);
 			} if (margin > 0) {
 				margin = '-' + Math.abs(margin) + 'px';
 			} else {
@@ -102,7 +103,7 @@
 		
 		//setDraggable- binds all dragging functionality
 		this.setDraggable = function(gallery) {
-			$('li', gallery).css('cursor', 'move'); //Setup default states
+			$(self.options.items, gallery).css('cursor', 'move'); //Setup default states
 			$(gallery).bind('mousedown', function(e) { //Bind mousedown to parent of items
 				e.preventDefault();
 				var initMousePos = e.pageX;

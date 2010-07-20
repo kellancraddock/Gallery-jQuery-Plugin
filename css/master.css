@@ -31,3 +31,8 @@ object { display: block; }
 	width: 100px;
 	float: left;
 }
+
+.gallery2 tr {
+	width: 300px;
+	float: left;
+}
