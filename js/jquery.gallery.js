@@ -6,7 +6,6 @@
 */
 
 (function($) {
-
 	//Create plugin obj
 	$.fn.gallery = function(options) {
 		return this.each(function(i) {
@@ -51,10 +50,10 @@
 			self.gallery = element;
 			var galleryWidth = $(self.options.items, self.gallery).length * $(self.options.items, self.gallery).eq(0).outerWidth(true);
 			var viewBoxWidth = self.options.itemsVisible * $(self.options.items, self.gallery).eq(0).outerWidth(true);
-			var class = 'galleryWrapper';
-		
-			$(self.gallery).wrap('<div class="' + class + '" />').css({'width': galleryWidth});
-			$(self.gallery).parent('.' + class).css({'width': viewBoxWidth, 'overflow-x': 'hidden'});
+			var galleryClass = 'galleryWrapper';
+			
+			$(self.gallery).wrap('<div class="' + galleryClass + '" />').css({'width': galleryWidth});
+			$(self.gallery).parent('.' + galleryClass).css({'width': viewBoxWidth, 'overflow-x': 'hidden'});
 			
 			$(self.options.items, self.gallery).eq(0).addClass('active');
 			
