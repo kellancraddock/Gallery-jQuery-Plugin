@@ -1,11 +1,9 @@
 /**
 * Gallery - A jQuery plugin
-* Description: This plugin creates an animated, draggable gallery using list items (li)
+* Description: This plugin creates an animated, draggable gallery
 * Author: Kellan Craddock
 * Email: kellancraddock@gmail.com
 */
-
-//NOTES - add functionality to slide to a specific slide (number) then allow for a call back that fires on slide move.
 
 (function($) {
 
@@ -37,8 +35,10 @@
 		this.defaults = {
 			items: 'li',
 			itemsVisible: 3,
-			itemsOffset: 1,
+			itemsOffset: 0,
+			clickable: true,
 			draggable: true,
+			slide: true,
 			onItemSet: function() {}
 		}
 		
@@ -58,28 +58,52 @@
 			
 			$(self.options.items, self.gallery).eq(0).addClass('active');
 			
-			//Bind default click to items
-			$(self.options.items, self.gallery).bind('click', function() {
-				self.setItem($(this));
-				return false;
-			});
-			
+			//Check for ability to click on an item 
+			if (self.options.clickable) {
+				$(self.options.items, self.gallery).bind('click', function() {
+					self.moveTo($(this));
+					return false;
+				});
+			}
+			//Check for ability to drag an item
 			if (self.options.draggable) { self.setDraggable(); }
 		}
 		
-		//setItem method- resets the active item
-		this.setItem = function(element) {
-			//Check if 'element' is a number, string, or jquery object then find the correct item
-			var element = (isNaN(element)) ? element : $(self.options.items, self.gallery).eq(element);
+		//moveTo method- resets the active item. Takes an object, number, or 'next' & 'back'
+		this.moveTo = function(item) {
+			var element;
+			switch(typeof(item)){
+				case 'object':
+				  element = item;
+				  break;
+				case 'number':
+				  element = $(self.options.items, self.gallery).eq((item - 1));
+				  break;
+				case 'string':
+				  if (item == 'next') {
+				  	element = ($('.active', self.gallery).next(self.options.items).length > 0) ? $('.active', self.gallery).next(self.options.items) : false;
+				  } else if (item == 'back') {
+				  	element = ($('.active', self.gallery).prev(self.options.items).length > 0) ? $('.active', self.gallery).prev(self.options.items) : false;
+				  }
+				  break;
+				default:
+				  return false;
+			}
+			
+			//If there is no element available to move to, then return false
+			if (!element) {return false}
+			
 			//onItemSet Callback
 			self.options.onItemSet(element, self.gallery);
-		
+			//Remove all active classes in gallery
 			$(self.options.items, self.gallery).removeClass('active');
-	
+			//Set active class on the new item
 			element.addClass('active');
 			
-			//$(self.controls.updateText).text(element.children('a').attr('href').replace('#', ''));
-			self.slideLeft(self.options.itemsOffset);
+			//Check for option to slide gallery
+			if (self.options.slide) {
+				self.slideLeft(self.options.itemsOffset);
+			} 
 		}
 		
 		//slideLeft- slides to the currently active item
@@ -138,11 +162,6 @@
 				newMargin = "-" + Math.abs(initGalleryMargin + margin) + 'px';
 			}
 			$(self.gallery).css('marginLeft', newMargin);
-		}
-		
-		//getActive - return the currently active gallery item
-		this.getActive = function() {
-			return $('.active', self.gallery);
 		}
 		
 		//Set the instance to the elements data

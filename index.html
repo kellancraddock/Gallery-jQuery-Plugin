@@ -9,21 +9,45 @@
 	<script type="text/javascript">
 		$(function() {
 			//Option Defaults - {items: 'li', itemsVisible: 3, itemOffset: 1, draggable: true, onItemSet: function(){} }
-			$('.gallery2, .gallery3').gallery({items: 'tr', draggable: false});
-			$('.gallery').gallery({
+			$('.galleryControls').gallery({
+				slide: false,
+				itemsVisible: 5,
+				draggable: false,
 				onItemSet: function(element, gallery) {
-					var slideLocation = $(element, gallery).prevAll().length;
-					$('.gallery2, .gallery3').each(function() {
-						$(this).data('gallery').setItem(slideLocation);
+					var slideLocation = parseInt($(element).text());
+					$('.gallery, .gallery2, .gallery3').each(function() {
+						$(this).data('gallery').moveTo(slideLocation);
 					});
 				}
 			});
+			
+			$('.gallery2, .gallery3').gallery({items: 'tr', draggable: false, clickable: false});
+			
+			$('.gallery').gallery({clickable: false, draggable: false});
+			
+			$('.back').bind('click', function() {
+				$('.galleryControls').data('gallery').moveTo('back');
+			});
+			$('.next').bind('click', function() {
+				$('.galleryControls').data('gallery').moveTo('next');
+			});
+			
 		});
 	</script>
 </head>
 
 <body>
-
+	<h1>
+		<a class="back" href="#">Back</a>
+		<ul class="galleryControls">
+			<li>1</li>
+			<li>2</li>
+			<li>3</li>
+			<li>4</li>
+			<li>5</li>
+		</ul>
+		<a class="next" href="#">Next</a>
+	</h1>
 	<ul class="gallery">
 		<li>
 			<h5>1</h5>
