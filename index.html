@@ -11,7 +11,7 @@
 			/* //Option Defaults - {items: 'li', itemsVisible: 3, itemOffset: 1, draggable: true, onItemSet: function(){} } */
 			$('.galleryControls').gallery({
 				animate: false,
-				itemsVisible: 5,
+				itemsVisible: 'all',
 				draggable: false,
 				onItemSet: function(element, gallery) {
 					var slideLocation = parseInt($(element).text());

@@ -30,6 +30,8 @@
 	$.fn.gallery.instance = function(element, options) {
 		var self = this;
 		this.gallery;
+		this.viewBoxWidth;
+		
 		//Defaults
 		this.defaults = {
 			items: 'li',
@@ -51,11 +53,14 @@
 			//Set up default states
 			self.gallery = element;
 			var galleryWidth = $(self.options.items, self.gallery).length * $(self.options.items, self.gallery).eq(0).outerWidth(true);
-			var viewBoxWidth = self.options.itemsVisible * $(self.options.items, self.gallery).eq(0).outerWidth(true);
+			
+			//Set the view box width
+			self.setViewBoxWidth();
+			
 			var galleryClass = 'galleryWrapper';
 			
 			$(self.gallery).wrap('<div class="' + galleryClass + '" />').css({'width': galleryWidth});
-			$(self.gallery).parent('.' + galleryClass).css({'width': viewBoxWidth, 'overflow-x': 'hidden'});
+			$(self.gallery).parent('.' + galleryClass).css({'width': self.viewBoxWidth, 'overflow-x': 'hidden'});
 			
 			$(self.options.items, self.gallery).eq(0).addClass('active');
 			
@@ -68,6 +73,21 @@
 			}
 			//Check for ability to drag an item
 			if (self.options.draggable) { self.setDraggable(); }
+		}
+		
+		this.setViewBoxWidth = function() {
+			switch(typeof(self.options.itemsVisible)){
+				case 'number':
+					self.viewBoxWidth = self.options.itemsVisible * $(self.options.items, self.gallery).eq(0).outerWidth(true);
+					break;
+				case 'string':
+					if (self.options.itemsVisible.toLowerCase() == 'all' || self.options.itemsVisible == '*') {
+						self.viewBoxWidth = $(self.options.items, self.gallery).length * $(self.options.items, self.gallery).eq(0).outerWidth(true);
+					}
+					break;
+				default:
+					return false;
+			}
 		}
 		
 		//moveTo method- resets the active item. Takes an object, number, or 'next' & 'back'
