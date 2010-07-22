@@ -59,6 +59,7 @@ object { display: block; }
 	clear: both;
 	visibility: hidden;
 }
+
 /* IE6 */ 
 * html .galleryControls {
 	height: 1%;
