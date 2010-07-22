@@ -37,7 +37,9 @@
 			itemsOffset: 0,
 			clickable: true,
 			draggable: true,
-			slide: true,
+			animate: true,
+			animationDuration: 500,
+			animationEasing: 'swing',
 			onItemSet: function() {}
 		}
 		
@@ -99,8 +101,8 @@
 			//Set active class on the new item
 			element.addClass('active');
 			
-			//Check for option to slide gallery
-			if (self.options.slide) {
+			//Check for option to animate gallery
+			if (self.options.animate) {
 				self.slideLeft(self.options.itemsOffset);
 			} 
 		}
@@ -123,7 +125,10 @@
 				
 			$(self.gallery).animate({
 			    marginLeft: margin
-			}, 500, function() {
+			}, {
+				duration: self.options.animationDuration,
+				easing: self.options.animationEasing
+			}, function() {
 			    // Animation complete.
 			});
 				
