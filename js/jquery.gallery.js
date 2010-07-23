@@ -198,12 +198,16 @@
 		
 		//setDraggable- binds all dragging functionality
 		this.setDraggable = function() {
-			$(self.options.items, self.gallery).css('cursor', 'move'); //Setup default states
+			 //Setup default states
+			var defaultCursor = $(self.options.items, self.gallery).css('cursor');
+			
 			$(self.gallery).bind('mousedown', function(e) { //Bind mousedown to parent of items
 				e.preventDefault();
 				var initMousePos = e.pageX;
 				var initGalleryMargin = 1 * $(self.gallery).css('marginLeft').replace('px', '');
 				
+				//Set the cursor				
+				$(self.options.items, self.gallery).css('cursor', 'move');
 				
 				$(self.gallery).bind('mousemove', function(e) {
 					var margin = e.pageX - initMousePos;
@@ -212,6 +216,7 @@
 				
 				$('html').bind('mouseup', function() {
 					$(self.gallery).unbind('mousemove');
+					$(self.options.items, self.gallery).css('cursor', defaultCursor);
 				});
 			});
 		}
