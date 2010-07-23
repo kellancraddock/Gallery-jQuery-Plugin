@@ -26,10 +26,11 @@
 			$('.gallery').gallery({clickable: false, draggable: false});
 			
 			$('.back').bind('click', function() {
-				$('.galleryControls').data('gallery').moveTo('back');
+				var controls = $('.galleryControls').data('gallery').moveTo('back');
+				
 			});
 			$('.next').bind('click', function() {
-				$('.galleryControls').data('gallery').moveTo('next');
+				var controls = $('.galleryControls').data('gallery').moveTo('next');
 			});
 			
 		});

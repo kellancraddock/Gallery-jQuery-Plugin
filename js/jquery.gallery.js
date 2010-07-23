@@ -124,7 +124,10 @@
 			//Check for option to animate gallery
 			if (self.options.animate) {
 				self.slideLeft(self.options.itemsOffset);
-			} 
+			}
+			
+			//Return obj of next and prev items to use in setting control visibility
+			return { prevCount: element.prevAll().length, nextCount: element.nextAll().length };
 		}
 		
 		//slideLeft- slides to the currently active item
