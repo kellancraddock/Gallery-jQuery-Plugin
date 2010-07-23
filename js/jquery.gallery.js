@@ -5,6 +5,8 @@
 * Email: kellancraddock@gmail.com
 */
 
+//TODO - make viewBoxWidth dynamic. Animate width on gallery move based on the items visible
+
 (function($) {
 	//Create plugin obj
 	$.fn.gallery = function(options) {
@@ -16,6 +18,10 @@
 	//Acuire an instance of the plugin
 	$.fn.gallery.createInstance = function(element, options) {
 		if (element.data('gallery')) {
+			if (options != undefined) {
+				element.data('gallery').options = $.extend(true, {}, element.data('gallery').options, options);
+				element.data('gallery').init(element);
+			}
 			//Existing Instance
 			return element;
 		} else {
@@ -37,7 +43,7 @@
 			items: 'li',
 			itemsVisible: 3,
 			itemsOffset: 0,
-			controls: { 'prev': '.prev', 'next': '.next' },
+			controls: false,
 			clickable: true,
 			draggable: true,
 			animate: true,
@@ -63,7 +69,17 @@
 			$(self.gallery).wrap('<div class="' + galleryClass + '" />').css({'width': galleryWidth});
 			$(self.gallery).parent('.' + galleryClass).css({'width': self.viewBoxWidth, 'overflow-x': 'hidden'});
 			
-			$(self.options.items, self.gallery).eq(0).addClass('active');
+			//Check for controls 
+			if (self.options.controls) {
+				$(self.options.controls.prev).bind('click', function() {
+					self.moveTo('back');
+					return false;
+				});
+				$(self.options.controls.next).bind('click', function() {
+					self.moveTo('next');
+					return false;
+				});
+			}
 			
 			//Check for ability to click on an item 
 			if (self.options.clickable) {
@@ -102,7 +118,7 @@
 				  element = $(self.options.items, self.gallery).eq((item - 1));
 				  break;
 				case 'string':
-				  if (item == 'next') {
+				  if (item == 'next') {	
 				  	element = ($('.active', self.gallery).next(self.options.items).length > 0) ? $('.active', self.gallery).next(self.options.items) : false;
 				  } else if (item == 'back') {
 				  	element = ($('.active', self.gallery).prev(self.options.items).length > 0) ? $('.active', self.gallery).prev(self.options.items) : false;
@@ -133,7 +149,7 @@
 		}
 		
 		this.updateControls = function(controls) {
-			console.log(controls);
+
 			if (controls.nextCount && controls.prevCount) {
 				//there are both next and prev options
 				$(self.options.controls.prev + ', ' + self.options.controls.next).removeClass('disabled');

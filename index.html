@@ -13,7 +13,7 @@
 				animate: false,
 				itemsVisible: 'all',
 				draggable: false,
-				controls: {'prev': '.back'},
+				controls: {'prev': '.back', 'next': '.next'},
 				onItemSet: function(element, gallery) {
 					var slideLocation = parseInt($(element).text());
 					$('.gallery, .gallery2, .gallery3').each(function() {
@@ -21,19 +21,13 @@
 					});
 				}
 			});
-			
+
 			$('.gallery2, .gallery3').gallery({items: 'tr', draggable: false, clickable: false});
 			
 			$('.gallery').gallery({clickable: false, draggable: false});
 			
-			$('.back').bind('click', function() {
-				var controls = $('.galleryControls').data('gallery').moveTo('back');
-				
-			});
-			$('.next').bind('click', function() {
-				var controls = $('.galleryControls').data('gallery').moveTo('next');
-			});
-			
+			//Initial move for controls
+			$('.galleryControls').data('gallery').moveTo(1);
 		});
 	</script>
 </head>
