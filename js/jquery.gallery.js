@@ -133,6 +133,7 @@
 		}
 		
 		this.updateControls = function(controls) {
+			console.log(controls);
 			if (controls.nextCount && controls.prevCount) {
 				//there are both next and prev options
 				$(self.options.controls.prev + ', ' + self.options.controls.next).removeClass('disabled');
@@ -140,10 +141,12 @@
 				switch(0) {
 					case controls.nextCount:
 						//no next, disable next
+						$(self.options.controls.prev + ', ' + self.options.controls.next).removeClass('disabled');
 						$(self.options.controls.next).addClass('disabled');
 						break;
 					case controls.prevCount:
 						//no prev, disable
+						$(self.options.controls.prev + ', ' + self.options.controls.next).removeClass('disabled');
 						$(self.options.controls.prev).addClass('disabled');
 						break;
 				}
