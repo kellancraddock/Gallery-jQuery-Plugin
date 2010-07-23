@@ -37,6 +37,7 @@
 			items: 'li',
 			itemsVisible: 3,
 			itemsOffset: 0,
+			controls: { 'prev': '.prev', 'next': '.next' },
 			clickable: true,
 			draggable: true,
 			animate: true,
@@ -46,14 +47,14 @@
 		}
 		
 		//Extend the default options obj
-		this.options = $.extend({}, self.defaults, options);
+		this.options = $.extend(true, {}, self.defaults, options);
 		
 		//Init (construct) function
 		this.init = function(element) {
 			//Set up default states
 			self.gallery = element;
 			var galleryWidth = $(self.options.items, self.gallery).length * $(self.options.items, self.gallery).eq(0).outerWidth(true);
-			
+
 			//Set the view box width
 			self.setViewBoxWidth();
 			
@@ -126,8 +127,27 @@
 				self.slideLeft(self.options.itemsOffset);
 			}
 			
-			//Return obj of next and prev items to use in setting control visibility
-			return { prevCount: element.prevAll().length, nextCount: element.nextAll().length };
+			//Update the controls to enable and disable visually
+			var controls = { prevCount: element.prevAll().length, nextCount: element.nextAll().length };
+			self.updateControls(controls);
+		}
+		
+		this.updateControls = function(controls) {
+			if (controls.nextCount && controls.prevCount) {
+				//there are both next and prev options
+				$(self.options.controls.prev + ', ' + self.options.controls.next).removeClass('disabled');
+			} else {
+				switch(0) {
+					case controls.nextCount:
+						//no next, disable next
+						$(self.options.controls.next).addClass('disabled');
+						break;
+					case controls.prevCount:
+						//no prev, disable
+						$(self.options.controls.prev).addClass('disabled');
+						break;
+				}
+			}
 		}
 		
 		//slideLeft- slides to the currently active item

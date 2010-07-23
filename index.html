@@ -13,6 +13,7 @@
 				animate: false,
 				itemsVisible: 'all',
 				draggable: false,
+				controls: {'prev': '.back'},
 				onItemSet: function(element, gallery) {
 					var slideLocation = parseInt($(element).text());
 					$('.gallery, .gallery2, .gallery3').each(function() {
