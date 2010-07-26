@@ -15,9 +15,16 @@
 				draggable: true,
 				controls: {'prev': '.back', 'next': '.next'},
 				onItemSet: function(element, gallery) {
-					var slideLocation = parseInt($(element).text());
+					var slideLocation = element.prevAll().andSelf().length;
 					$('.gallery, .gallery2, .gallery3').each(function() {
 						$(this).data('gallery').moveTo(slideLocation);
+					});
+				},
+				onItemRemove: function(element, gallery) {
+					
+					var slideLocation = element.prevAll().andSelf().length;
+					$('.gallery, .gallery2, .gallery3').each(function() {
+						$(this).data('gallery').itemRemove(slideLocation);
 					});
 				}
 			});
@@ -28,6 +35,12 @@
 			
 			//Initial move for controls
 			$('.galleryControls').data('gallery').moveTo(1);
+			
+			$('.deleteBtn').bind('click', function() {
+				var slideLocation = $(this).parent('li').prevAll().andSelf().length;
+				$('.galleryControls').data('gallery').itemRemove(slideLocation);
+				return false;
+			});
 		});
 	</script>
 </head>

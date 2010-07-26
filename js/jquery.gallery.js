@@ -6,6 +6,7 @@
 */
 
 //TODO - make viewBoxWidth dynamic. Animate width on gallery move based on the items visible
+// Make a remove item method that removes an item based on a number passed in, then make a onRemoveItem callback
 
 (function($) {
 	//Create plugin obj
@@ -49,7 +50,8 @@
 			animate: true,
 			animationDuration: 500,
 			animationEasing: 'swing',
-			onItemSet: function() {}
+			onItemSet: function() {},
+			onItemRemove: function() {}
 		}
 		
 		//Extend the default options obj
@@ -233,6 +235,29 @@
 				newMargin = "-" + Math.abs(initGalleryMargin + margin) + 'px';
 			}
 			$(self.gallery).css('marginLeft', newMargin);
+		}
+		
+		this.itemRemove = function(item) {
+			var element;
+			switch(typeof(item)){
+				case 'object':
+				  element = item;
+				  break;
+				case 'number':
+				  element = $(self.options.items, self.gallery).eq((item - 1));
+				  break;
+				default:
+				  return false;
+			}
+			
+			//Check for element
+			if (!element) { return false; }
+			
+			//onItemSet Callback
+			self.options.onItemRemove(element, self.gallery);
+			element.animate( { opacity: "0"}, 1000).animate({width: "0"}, 1000, function() {
+				$(this).remove();
+			});
 		}
 		
 		//Set the instance to the elements data
