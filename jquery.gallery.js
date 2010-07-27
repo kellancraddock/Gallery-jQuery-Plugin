@@ -242,8 +242,9 @@
 			$(self.gallery).css('marginLeft', newMargin);
 		}
 		
-		this.itemRemove = function(item) {
+		this.itemRemove = function(item, animate) {
 			var element;
+			var animate = (animate == undefined) ? true : false;
 			switch(typeof(item)){
 				case 'object':
 				  element = item;
@@ -260,9 +261,14 @@
 			
 			//onItemSet Callback
 			self.options.onItemRemove(element, self.gallery);
-			element.animate( { opacity: "0"}, 1000).animate({width: "0"}, 1000, function() {
-				$(this).remove();
-			});
+			//Check for animation before removing
+			if (animate) {
+				element.animate( { opacity: "0"}, 600).animate({width: "0"}, 600, function() {
+					$(this).remove();
+				});
+			} else {
+				element.remove();
+			}
 		}
 		
 		//Set the instance to the elements data
