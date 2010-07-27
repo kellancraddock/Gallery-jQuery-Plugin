@@ -73,11 +73,11 @@
 			
 			//Check for controls 
 			if (self.options.controls) {
-				$(self.options.controls.prev).bind('click', function() {
+				$(self.options.controls.prev).unbind('click').bind('click', function() {
 					self.moveTo('back');
 					return false;
 				});
-				$(self.options.controls.next).bind('click', function() {
+				$(self.options.controls.next).unbind('click').bind('click', function() {
 					self.moveTo('next');
 					return false;
 				});
