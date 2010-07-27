@@ -65,11 +65,16 @@
 
 			//Set the view box width
 			self.setViewBoxWidth();
-			
 			var galleryClass = 'galleryWrapper';
 			
-			$(self.gallery).wrap('<div class="' + galleryClass + '" />').css({'width': galleryWidth});
-			$(self.gallery).parent('.' + galleryClass).css({'width': self.viewBoxWidth, 'overflow-x': 'hidden'});
+			//Check to see if the gallery is already wrapped, else wrap it
+			if($(self.gallery).parent('.' + galleryClass).length) {
+				$(self.gallery).css({'width': galleryWidth});
+				$(self.gallery).parent('.' + galleryClass).css({'width': self.viewBoxWidth, 'overflow-x': 'hidden'});
+			} else {
+				$(self.gallery).wrap('<div class="' + galleryClass + '" />').css({'width': galleryWidth});
+				$(self.gallery).parent('.' + galleryClass).css({'width': self.viewBoxWidth, 'overflow-x': 'hidden'});
+			}
 			
 			//Check for controls 
 			if (self.options.controls) {
