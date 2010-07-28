@@ -263,11 +263,11 @@
 			self.options.onItemRemove(element, self.gallery);
 			//Check for animation before removing
 			if (animate) {
-				element.animate( { opacity: "0"}, 600).animate({width: "0"}, 600, function() {
+				element.addClass('removing').animate( { opacity: "0"}, 600).animate({width: "0"}, 600, function() {
 					$(this).remove();
 				});
 			} else {
-				element.remove();
+				element.addClass('removing').remove();
 			}
 		}
 		
