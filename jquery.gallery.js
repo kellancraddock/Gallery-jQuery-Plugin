@@ -50,7 +50,7 @@
 			animate: true,
 			animationDuration: 500,
 			animationEasing: 'swing',
-			onItemSet: function() {},
+			onMove: function() {},
 			onItemRemove: function() {}
 		}
 		
@@ -138,8 +138,8 @@
 			//If there is no element available to move to, then return false
 			if (!element) {return false}
 			
-			//onItemSet Callback
-			self.options.onItemSet(element, self.gallery);
+			//onMove Callback
+			self.options.onMove(element, self.gallery);
 			//Remove all active classes in gallery
 			$(self.options.items, self.gallery).removeClass('active');
 			//Set active class on the new item
@@ -259,7 +259,7 @@
 			//Check for element
 			if (!element) { return false; }
 			
-			//onItemSet Callback
+			//onItemRemove Callback
 			self.options.onItemRemove(element, self.gallery);
 			//Check for animation before removing
 			if (animate) {
