@@ -51,7 +51,8 @@
 			animationDuration: 500,
 			animationEasing: 'swing',
 			onMove: function() {},
-			onItemRemove: function() {}
+			onItemRemove: function() {},
+			onItemRemoved: function() {}
 		}
 		
 		//Extend the default options obj
@@ -264,10 +265,16 @@
 			//Check for animation before removing
 			if (animate) {
 				element.addClass('removing').animate( { opacity: "0"}, 600).animate({width: "0"}, 600, function() {
+					var location = element.prevAll('.show').length;
 					$(this).remove();
+					//Fire onItemRemoved callback 
+					self.options.onItemRemoved(location, self.gallery)
 				});
 			} else {
+				var location = element.prevAll('.show').length;
 				element.addClass('removing').remove();
+				//Fire onItemRemoved callback
+				self.options.onItemRemoved(location, self.gallery);
 			}
 		}
 		
