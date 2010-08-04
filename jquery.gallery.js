@@ -162,17 +162,15 @@
 				//there are both next and prev options
 				$(self.options.controls.prev + ', ' + self.options.controls.next).removeClass('disabled');
 			} else {
-				switch(0) {
-					case controls.nextCount:
-						//no next, disable next
-						$(self.options.controls.prev + ', ' + self.options.controls.next).removeClass('disabled');
-						$(self.options.controls.next).addClass('disabled');
-						break;
-					case controls.prevCount:
-						//no prev, disable
-						$(self.options.controls.prev + ', ' + self.options.controls.next).removeClass('disabled');
-						$(self.options.controls.prev).addClass('disabled');
-						break;
+				$(self.options.controls.prev + ', ' + self.options.controls.next).removeClass('disabled');
+				
+				if( controls.nextCount == 0) {
+					//no next, disable next
+					$(self.options.controls.next).addClass('disabled');
+				}
+				if( controls.prevCount == 0) {
+					//no prev, disable
+					$(self.options.controls.prev).addClass('disabled');
 				}
 			}
 		}
