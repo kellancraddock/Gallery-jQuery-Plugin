@@ -116,7 +116,9 @@
 		}
 		
 		//moveTo method- resets the active item. Takes an object, number, or 'next' & 'back'
-		this.moveTo = function(item) {
+		this.moveTo = function(item, animate) {
+			var animate = (animate == undefined) ? true : animate;
+			//console.log(animate);
 			var element;
 			switch(typeof(item)){
 				case 'object':
@@ -148,7 +150,7 @@
 			
 			//Check for option to animate gallery
 			if (self.options.animate) {
-				self.slideLeft(self.options.itemsOffset);
+				self.slideLeft(self.options.itemsOffset, animate);
 			}
 			
 			//Update the controls to enable and disable visually
@@ -162,23 +164,21 @@
 				//there are both next and prev options
 				$(self.options.controls.prev + ', ' + self.options.controls.next).removeClass('disabled');
 			} else {
-				switch(0) {
-					case controls.nextCount:
-						//no next, disable next
-						$(self.options.controls.prev + ', ' + self.options.controls.next).removeClass('disabled');
-						$(self.options.controls.next).addClass('disabled');
-						break;
-					case controls.prevCount:
-						//no prev, disable
-						$(self.options.controls.prev + ', ' + self.options.controls.next).removeClass('disabled');
-						$(self.options.controls.prev).addClass('disabled');
-						break;
+				$(self.options.controls.prev + ', ' + self.options.controls.next).removeClass('disabled');
+				
+				if( controls.nextCount == 0) {
+					//no next, disable next
+					$(self.options.controls.next).addClass('disabled');
+				}
+				if( controls.prevCount == 0) {
+					//no prev, disable
+					$(self.options.controls.prev).addClass('disabled');
 				}
 			}
 		}
 		
 		//slideLeft- slides to the currently active item
-		this.slideLeft = function(offset) {
+		this.slideLeft = function(offset, animate) {
 			var items;
 			var margin;
 			var prevItems = $(' .active', self.gallery).prevAll(self.options.items).length;
@@ -192,15 +192,21 @@
 			} else {
 				margin = '+' + Math.abs(margin) + 'px';
 			}
-				
-			$(self.gallery).animate({
-			    marginLeft: margin
-			}, {
-				duration: self.options.animationDuration,
-				easing: self.options.animationEasing
-			}, function() {
-			    // Animation complete.
-			});
+			
+			//If set to animate
+			if (animate) {	
+				$(self.gallery).animate({
+				    marginLeft: margin
+				}, {
+					duration: self.options.animationDuration,
+					easing: self.options.animationEasing
+				}, function() {
+				    // Animation complete.
+				});
+			//Else simply set css margin left
+			} else {
+				$(self.gallery).css({marginLeft: margin});
+			}
 				
 		}
 		
