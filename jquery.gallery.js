@@ -44,6 +44,7 @@
 			items: 'li',
 			itemsVisible: 3,
 			itemsOffset: 0,
+			direction: 'horizontal',
 			controls: false,
 			clickable: true,
 			draggable: true,
@@ -63,18 +64,34 @@
 			//Set up default states
 			self.gallery = element;
 			var galleryWidth = $(self.options.items, self.gallery).length * $(self.options.items, self.gallery).eq(0).outerWidth(true);
+			var galleryHeight = $(self.options.items, self.gallery).length * $(self.options.items, self.gallery).eq(0).outerHeight(true);
 
-			//Set the view box width
-			self.setViewBoxWidth();
+			if(self.options.direction == 'horizontal') {
+				//Set the view box width
+				self.setViewBoxWidth();
+			} else if(self.options.direction == 'vertical') {
+				self.setViewBoxHeight();
+			}
+			
 			var galleryClass = 'galleryWrapper';
 			
 			//Check to see if the gallery is already wrapped, else wrap it
 			if($(self.gallery).parent('.' + galleryClass).length) {
-				$(self.gallery).css({'width': galleryWidth});
-				$(self.gallery).parent('.' + galleryClass).css({'width': self.viewBoxWidth, 'overflow-x': 'hidden'});
+				if(self.options.direction == 'horizontal') {
+					$(self.gallery).css({'width': galleryWidth});
+					$(self.gallery).parent('.' + galleryClass).css({'width': self.viewBoxWidth, 'overflow-x': 'hidden'});
+				} else if(self.options.direction == 'vertical') {
+					$(self.gallery).css({'height': galleryHeight});
+					$(self.gallery).parent('.' + galleryClass).css({'height': self.viewBoxHeight, 'overflow-y': 'hidden'});
+				}
 			} else {
-				$(self.gallery).wrap('<div class="' + galleryClass + '" />').css({'width': galleryWidth});
-				$(self.gallery).parent('.' + galleryClass).css({'width': self.viewBoxWidth, 'overflow-x': 'hidden'});
+				if(self.options.direction == 'horizontal') {
+					$(self.gallery).wrap('<div class="' + galleryClass + '" />').css({'width': galleryWidth});
+					$(self.gallery).parent('.' + galleryClass).css({'width': self.viewBoxWidth, 'overflow-x': 'hidden'});
+				} else if(self.options.direction == 'vertical') {
+					$(self.gallery).wrap('<div class="' + galleryClass + '" />').css({'height': galleryHeight});
+					$(self.gallery).parent('.' + galleryClass).css({'height': self.viewBoxHeight, 'overflow-y': 'hidden'});
+				}
 			}
 			
 			//Check for controls 
@@ -103,11 +120,26 @@
 		this.setViewBoxWidth = function() {
 			switch(typeof(self.options.itemsVisible)){
 				case 'number':
-					self.viewBoxWidth = self.options.itemsVisible * $(self.options.items, self.gallery).eq(0).outerWidth(true) + (parseInt($(self.gallery).css('marginLeft')) + parseInt($(self.gallery).css('marginRight')) );
+					self.viewBoxWidth = self.options.itemsVisible * $(self.options.items, self.gallery).eq(0).outerWidth(true) + (parseInt($(self.gallery).css('marginLeft')) + parseInt($(self.gallery).css('marginRight')) ) + (parseInt($(self.gallery).css('borderLeftWidth'), 10) + parseInt($(self.gallery).css('borderRightWidth'), 10) );
 					break;
 				case 'string':
 					if (self.options.itemsVisible.toLowerCase() == 'all' || self.options.itemsVisible == '*') {
-						self.viewBoxWidth = $(self.options.items, self.gallery).length * $(self.options.items, self.gallery).eq(0).outerWidth(true) + (parseInt($(self.gallery).css('marginLeft')) + parseInt($(self.gallery).css('marginRight')) );
+						self.viewBoxWidth = $(self.options.items, self.gallery).length * $(self.options.items, self.gallery).eq(0).outerWidth(true) + (parseInt($(self.gallery).css('marginLeft')) + parseInt($(self.gallery).css('marginRight')) ) + (parseInt($(self.gallery).css('borderLeftWidth'), 10) + parseInt($(self.gallery).css('borderRightWidth'), 10) );
+					}
+					break;
+				default:
+					return false;
+			}
+		}
+		
+		this.setViewBoxHeight = function() {
+			switch(typeof(self.options.itemsVisible)){
+				case 'number':
+					self.viewBoxHeight = self.options.itemsVisible * $(self.options.items, self.gallery).eq(0).outerHeight(true) + (parseInt($(self.gallery).css('marginTop')) + parseInt($(self.gallery).css('marginBottom')) ) + (parseInt($(self.gallery).css('borderTopWidth'), 10) + parseInt($(self.gallery).css('borderBottomWidth'), 10) );
+					break;
+				case 'string':
+					if (self.options.itemsVisible.toLowerCase() == 'all' || self.options.itemsVisible == '*') {
+						self.viewBoxWidth = $(self.options.items, self.gallery).length * $(self.options.items, self.gallery).eq(0).outerHeight(true) + (parseInt($(self.gallery).css('marginTop')) + parseInt($(self.gallery).css('marginBottom')) ) + (parseInt($(self.gallery).css('borderTopWidth'), 10) + parseInt($(self.gallery).css('borderBottomWidth'), 10) );
 					}
 					break;
 				default:
@@ -153,7 +185,12 @@
 			
 			//Check for option to animate gallery
 			if (self.options.animate) {
-				self.slideLeft(self.options.itemsOffset, animate);
+				
+				if(self.options.direction == 'horizontal') {
+					self.slideLeft(self.options.itemsOffset, animate);
+				} else if(self.options.direction == 'vertical') {
+					self.slideDown(self.options.itemsOffset, animate);
+				}
 			}
 			
 			//Update the controls to enable and disable visually
@@ -209,6 +246,39 @@
 			//Else simply set css margin left
 			} else {
 				$(self.gallery).css({marginLeft: margin});
+			}
+				
+		}
+		
+		//slideLeft- slides to the currently active item
+		this.slideDown = function(offset, animate) {
+			var items;
+			var margin;
+			var prevItems = $(' .active', self.gallery).prevAll(self.options.items).length;
+			
+			if (offset) {
+				margin = (prevItems - offset) * $(self.options.items, self.gallery).eq(0).outerHeight(true);
+			} else {
+				margin = prevItems * $(self.options.items, self.gallery).eq(0).outerHeight(true);
+			} if (margin > 0) {
+				margin = '-' + Math.abs(margin) + 'px';
+			} else {
+				margin = '+' + Math.abs(margin) + 'px';
+			}
+			
+			//If set to animate
+			if (animate) {	
+				$(self.gallery).animate({
+				    marginTop: margin
+				}, {
+					duration: self.options.animationDuration,
+					easing: self.options.animationEasing
+				}, function() {
+				    // Animation complete.
+				});
+			//Else simply set css margin left
+			} else {
+				$(self.gallery).css({marginTop: margin});
 			}
 				
 		}
