@@ -128,10 +128,13 @@
 				  element = $(self.options.items, self.gallery).eq((item - 1));
 				  break;
 				case 'string':
+				  self.options.controls.count = (typeof(self.options.controls.count)=='number') ? self.options.controls.count : 1;
 				  if (item == 'next') {	
-				  	element = ($('.active', self.gallery).next(self.options.items).length > 0) ? $('.active', self.gallery).next(self.options.items) : false;
+				  	newIndex = $('.active', self.gallery).prevAll().andSelf().length + (self.options.controls.count-1);
+				  	element = ($('.active', self.gallery).next(self.options.items).length > 0 && $(self.options.items, self.gallery).eq(newIndex).length > 0) ? $(self.options.items, self.gallery).eq(newIndex) : false;
 				  } else if (item == 'back') {
-				  	element = ($('.active', self.gallery).prev(self.options.items).length > 0) ? $('.active', self.gallery).prev(self.options.items) : false;
+				  	newIndex = $('.active', self.gallery).prevAll().andSelf().length - (self.options.controls.count+1);
+				  	element = ($('.active', self.gallery).prev(self.options.items).length > 0) ? $(self.options.items, self.gallery).eq(newIndex) : false;
 				  }
 				  break;
 				default:
