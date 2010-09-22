@@ -97,11 +97,15 @@
 			//Check for controls 
 			if (self.options.controls) {
 				$(self.options.controls.prev).unbind('click').bind('click', function() {
-					self.moveTo('back');
+					if(!$(this).hasClass('disabled')) {
+						self.moveTo('back');
+					}
 					return false;
 				});
 				$(self.options.controls.next).unbind('click').bind('click', function() {
-					self.moveTo('next');
+					if(!$(this).hasClass('disabled')) {
+						self.moveTo('next');
+					}
 					return false;
 				});
 			}
@@ -139,7 +143,7 @@
 					break;
 				case 'string':
 					if (self.options.itemsVisible.toLowerCase() == 'all' || self.options.itemsVisible == '*') {
-						self.viewBoxWidth = $(self.options.items, self.gallery).length * $(self.options.items, self.gallery).eq(0).outerHeight(true) + (parseInt($(self.gallery).css('marginTop')) + parseInt($(self.gallery).css('marginBottom')) ) + (parseInt($(self.gallery).css('borderTopWidth'), 10) + parseInt($(self.gallery).css('borderBottomWidth'), 10) );
+						self.viewBoxHeight = $(self.options.items, self.gallery).length * $(self.options.items, self.gallery).eq(0).outerHeight(true) + (parseInt($(self.gallery).css('marginTop')) + parseInt($(self.gallery).css('marginBottom')) ) + (parseInt($(self.gallery).css('borderTopWidth'), 10) + parseInt($(self.gallery).css('borderBottomWidth'), 10) );
 					}
 					break;
 				default:
@@ -199,22 +203,19 @@
 		}
 		
 		this.updateControls = function(controls) {
-
-			if (controls.nextCount && controls.prevCount) {
-				//there are both next and prev options
-				$(self.options.controls.prev + ', ' + self.options.controls.next).removeClass('disabled');
-			} else {
-				$(self.options.controls.prev + ', ' + self.options.controls.next).removeClass('disabled');
-				
-				if( controls.nextCount == 0) {
-					//no next, disable next
-					$(self.options.controls.next).addClass('disabled');
-				}
-				if( controls.prevCount == 0) {
-					//no prev, disable
-					$(self.options.controls.prev).addClass('disabled');
-				}
+			$(self.options.controls.prev + ', ' + self.options.controls.next).removeClass('disabled');
+			if( (controls.nextCount-self.options.controls.count) < 0 || controls.nextCount == 0) {
+				//no next, disable next
+				$(self.options.controls.next).addClass('disabled');
 			}
+			if( controls.prevCount == 0) {
+				//no prev, disable
+				$(self.options.controls.prev).addClass('disabled');
+			}
+		}
+		
+		this.disableControls = function() {
+			$(self.options.controls.prev + ', ' + self.options.controls.next).addClass('disabled');
 		}
 		
 		//slideLeft- slides to the currently active item
