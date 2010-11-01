@@ -9,3 +9,6 @@ v0.1 - Base plugin code
 ******
 TO DO:
 ******
+
+[x] Make height dynamically calculated
+[ ] Make width dynamically calculated
