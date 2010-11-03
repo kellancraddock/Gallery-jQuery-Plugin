@@ -66,40 +66,40 @@
 		this.init = function(element) {
 			//Set up default states
 			self.gallery = element;
-			var galleryWidth = $(self.options.items, self.gallery).length * $(self.options.items, self.gallery).eq(0).outerWidth(true);
-			var galleryHeight = $(self.options.items, self.gallery).length * $(self.options.items, self.gallery).eq(0).outerHeight(true);
-
-			if(self.options.direction == 'horizontal') {
-				//Set the view box width
-				self.setViewBoxWidth();
-			} else if(self.options.direction == 'vertical') {
-				self.setViewBoxHeight();
-			}
 			
 			var galleryClass = self.options.galleryClass;
 			var overflow = (self.options.overflow) ? 'visible' : 'hidden';
 			
 			//Check to see if the gallery is already wrapped, else wrap it
-			if($(self.gallery).parent('.' + galleryClass).length) {
+			if(!$(self.gallery).parent('.' + galleryClass).length) {
 				if(self.options.direction == 'horizontal') {
-					$(self.gallery).css({'width': galleryWidth});
-					$(self.gallery).parent('.' + galleryClass).css({'width': self.viewBoxWidth, 'overflow-x': overflow});
+					$(self.gallery).wrap('<div class="' + galleryClass + '" />');
 				} else if(self.options.direction == 'vertical') {
-					$(self.gallery).css({'height': galleryHeight});
-					$(self.gallery).parent('.' + galleryClass).css({'height': self.viewBoxHeight, 'overflow-y': overflow});
+					$(self.gallery).wrap('<div class="' + galleryClass + '" />');
 				}
-				//Set the gallery wrapper
-				self.galleryWrapper = $(self.gallery).parent('.' + galleryClass);
-			} else {
-				if(self.options.direction == 'horizontal') {
-					$(self.gallery).wrap('<div class="' + galleryClass + '" />').css({'width': galleryWidth});
-					$(self.gallery).parent('.' + galleryClass).css({'width': self.viewBoxWidth, 'overflow-x': overflow});
-				} else if(self.options.direction == 'vertical') {
-					$(self.gallery).wrap('<div class="' + galleryClass + '" />').css({'height': galleryHeight});
-					$(self.gallery).parent('.' + galleryClass).css({'height': self.viewBoxHeight, 'overflow-y': overflow});
-				}
-				//Set the gallery wrapper
-				self.galleryWrapper = $(self.gallery).parent('.' + galleryClass);
+			} 
+			
+			//Set the gallery Width
+			var galleryWidth = $(self.options.items, self.gallery).length * ($(self.options.items, self.gallery).eq(0).outerWidth(true) + (parseInt($(self.options.items, self.gallery).eq(0).css('marginLeft')) + parseInt($(self.options.items, self.gallery).eq(0).css('marginRight')) ) + (parseInt($(self.options.items, self.gallery).eq(0).css('borderLeftWidth'), 10) + parseInt($(self.options.items, self.gallery).eq(0).css('borderRightWidth'), 10) ));
+			var galleryHeight = $(self.options.items, self.gallery).length * ($(self.options.items, self.gallery).eq(0).outerHeight(true) + (parseInt($(self.options.items, self.gallery).eq(0).css('marginTop')) + parseInt($(self.options.items, self.gallery).eq(0).css('marginBottom')) ) + (parseInt($(self.options.items, self.gallery).eq(0).css('borderTopWidth'), 10) + parseInt($(self.options.items, self.gallery).eq(0).css('borderBottomWidth'), 10) ));
+			
+			//Set the gallery width & viewbox width
+			if(self.options.direction == 'horizontal') {
+				$(self.gallery).css({'width': galleryWidth});
+				$(self.gallery).parent('.' + galleryClass).css({'width': self.viewBoxWidth, 'overflow-x': overflow});
+			} else if(self.options.direction == 'vertical') {
+				$(self.gallery).css({'height': galleryHeight});
+				$(self.gallery).parent('.' + galleryClass).css({'height': self.viewBoxHeight, 'overflow-y': overflow});
+			}
+
+			//Set the gallery wrapper
+			self.galleryWrapper = $(self.gallery).parent('.' + galleryClass);
+			
+			if(self.options.direction == 'horizontal') {
+				//Set the view box width
+				self.setViewBoxWidth();
+			} else if(self.options.direction == 'vertical') {
+				self.setViewBoxHeight();
 			}
 			
 			//Check for controls 
@@ -133,7 +133,7 @@
 			switch(typeof(self.options.itemsVisible)){
 				case 'number':
 					/* console.log(parseInt($(self.gallery).css('marginLeft'))); */
-					self.viewBoxWidth = self.options.itemsVisible * $(self.options.items, self.gallery).eq(0).outerWidth(true);/*  + (parseInt($(self.gallery).css('marginLeft')) + parseInt($(self.gallery).css('marginRight')) ) + (parseInt($(self.gallery).css('borderLeftWidth'), 10) + parseInt($(self.gallery).css('borderRightWidth'), 10) ); */
+					self.viewBoxWidth = self.options.itemsVisible * ($(self.options.items, self.gallery).eq(0).outerWidth(true) + (parseInt($(self.options.items, self.gallery).eq(0).css('marginLeft')) + parseInt($(self.options.items, self.gallery).eq(0).css('marginRight')) ) + (parseInt($(self.options.items, self.gallery).eq(0).css('borderLeftWidth'), 10) + parseInt($(self.options.items, self.gallery).eq(0).css('borderRightWidth'), 10) ));
 					break;
 				case 'string':
 					if (self.options.itemsVisible.toLowerCase() == 'all' || self.options.itemsVisible == '*') {
