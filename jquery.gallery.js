@@ -130,10 +130,18 @@
 		}
 		
 		this.setViewBoxWidth = function() {
+			var active = $(self.options.items+'.active', self.gallery);
 			switch(typeof(self.options.itemsVisible)){
 				case 'number':
-					/* console.log(parseInt($(self.gallery).css('marginLeft'))); */
-					self.viewBoxWidth = self.options.itemsVisible * ($(self.options.items, self.gallery).eq(0).outerWidth(true) + (parseInt($(self.options.items, self.gallery).eq(0).css('marginLeft')) + parseInt($(self.options.items, self.gallery).eq(0).css('marginRight')) ) + (parseInt($(self.options.items, self.gallery).eq(0).css('borderLeftWidth'), 10) + parseInt($(self.options.items, self.gallery).eq(0).css('borderRightWidth'), 10) ));
+				  	var activeEq = (self.options.itemsOffset) ? $(active).prevAll().length - self.options.itemsOffset : $(active).prevAll().length;
+				  	activeEq = (activeEq > 0) ? activeEq : 0;
+					var visibleElements = $(self.options.items, self.gallery).slice(activeEq, activeEq + self.options.itemsVisible);
+
+					var viewBoxWidth = 0;
+					visibleElements.each(function() {
+						viewBoxWidth += $(this).outerWidth(true) + (parseInt($(this).css('borderLeftWidth')) + parseInt($(this).css('borderRightWidth')) );
+					});
+					self.viewBoxWidth = viewBoxWidth;
 					break;
 				case 'string':
 					if (self.options.itemsVisible.toLowerCase() == 'all' || self.options.itemsVisible == '*') {
@@ -274,6 +282,18 @@
 					easing: self.options.animationEasing
 				}, function() {
 				    // Animation complete.
+				});
+				//Get the viewbox height
+				self.setViewBoxWidth();
+				//Animate the gallery height
+				self.galleryWrapper.animate({
+					width: self.viewBoxWidth + 'px'
+				}, {
+					duration: self.options.animationDuration,
+					easing: self.options.animationEasing,
+					complete: function() {
+				    // Animation complete.
+				    }
 				});
 			//Else simply set css margin left
 			} else {

@@ -12,6 +12,6 @@ TO DO:
 ******
 
 [x] Make height dynamically calculated
-[ ] Make width dynamically calculated
+[x] Make width dynamically calculated
 [x] Make margins calculated for width
 [x] Make margins calculated for height
