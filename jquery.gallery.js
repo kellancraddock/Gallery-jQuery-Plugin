@@ -4,8 +4,7 @@
 * Author: Kellan Craddock
 * Email: kellancraddock@gmail.com
 */
-
-//TODO - make viewBoxWidth dynamic. Animate width on gallery move based on the items visible
+//TO DO:
 // Make a remove item method that removes an item based on a number passed in, then make a onRemoveItem callback
 
 (function($) {
@@ -42,21 +41,24 @@
 		
 		//Defaults
 		this.defaults = {
-			items: 'li',
-			itemsVisible: 3,
-			itemsOffset: 0,
-			direction: 'horizontal',
-			controls: false,
-			clickable: true,
-			draggable: true,
-			galleryClass: 'galleryWrapper',
+			items: 'li', //Specify item (can be a class)
+			itemsVisible: 3, //# of items visible
+			itemsIncrement: 1, //# of items to move by
+			itemsOffset: 0, //# of items to offset the active by when moved (used for centering)
+			direction: 'horizontal', //gallery direction (can be 'vertical')
+			controls: false, //Takes an obj with 'next' and 'prev' options as references to nav elements {next: '#feature .galleryControl.right',prev: '#feature .galleryControl.left'}
+			clickable: true, //Items are clickable and automatically move to the itemsOffset
+			draggable: true, // Gallery is draggable
+			galleryClass: 'galleryWrapper', //Class used for the 'viewbox' or gallery wrapper
 			overflow: false,
-			animate: true,
-			animationDuration: 500,
-			animationEasing: 'swing',
-			onMove: function() {},
-			onItemRemove: function() {},
-			onItemRemoved: function() {}
+			animate: true, //Does the gallery animate on move
+			animationDuration: 500, //Animation duration
+			animationEasing: 'swing', //Animation easing (using jquery easing plugin)
+			onMove: function() {}, //On gallery move callback
+			onMoveComplete: function() {}, //On move complete callback
+			onItemRemove: function() {}, //On Item remove callback
+			onItemRemoved: function() {}, //On Item removed callback
+			onItemClick: function() {} //On Item click callback
 		}
 		
 		//Extend the default options obj
@@ -106,13 +108,25 @@
 			if (self.options.controls) {
 				$(self.options.controls.prev).unbind('click').bind('click', function() {
 					if(!$(this).hasClass('disabled')) {
-						self.moveTo('back');
+						//If item exists, move to it
+						if ($(self.options.items + '.active', self.gallery).prevAll().andSelf().length - self.options.itemsIncrement > 0) {
+							self.moveTo($(self.options.items + '.active', self.gallery).prevAll().andSelf().length - self.options.itemsIncrement);
+						//Else move to the begining
+						} else {
+							self.moveTo(1);
+						}
 					}
 					return false;
 				});
 				$(self.options.controls.next).unbind('click').bind('click', function() {
 					if(!$(this).hasClass('disabled')) {
-						self.moveTo('next');
+						//If item exists, move to it
+						if ($(self.options.items, self.gallery).eq($(self.options.items + '.active', self.gallery).prevAll().andSelf().length + self.options.itemsIncrement).length) {
+							self.moveTo($(self.options.items + '.active', self.gallery).prevAll().andSelf().length + self.options.itemsIncrement);
+						//Else move to the end
+						} else {
+							self.moveTo($(self.options.items, self.gallery).length);
+						}
 					}
 					return false;
 				});
@@ -122,6 +136,8 @@
 			if (self.options.clickable) {
 				$(self.options.items, self.gallery).bind('click', function() {
 					self.moveTo($(this));
+					//On Click Callback
+					self.options.onItemClick($(this));
 					return false;
 				});
 			}
@@ -279,9 +295,9 @@
 				    marginLeft: margin
 				}, {
 					duration: self.options.animationDuration,
-					easing: self.options.animationEasing
-				}, function() {
-				    // Animation complete.
+					queue: true,
+					easing: self.options.animationEasing,
+					complete:  self.options.onMoveComplete()
 				});
 				//Get the viewbox height
 				self.setViewBoxWidth();
@@ -290,6 +306,7 @@
 					width: self.viewBoxWidth + 'px'
 				}, {
 					duration: self.options.animationDuration,
+					queue: true,
 					easing: self.options.animationEasing,
 					complete: function() {
 				    // Animation complete.
