@@ -3,9 +3,26 @@
 * Description: This plugin creates an animated, draggable gallery
 * Author: Kellan Craddock
 * Email: kellancraddock@gmail.com
+*
+* USEAGE
+*
+* Default:
+* $('div').gallery();
+*
+* With params:
+* $('div').gallery({items: 'li', itemsVisible: 3});
+*
+* Accessing the plugin after init
+* $('div').data('gallery');
+*
+* Calling a method
+* $('div').data('gallery').moveTo(5);
+
 */
 //TO DO:
 // Make a remove item method that removes an item based on a number passed in, then make a onRemoveItem callback
+
+
 
 (function($) {
 	//Create plugin obj
