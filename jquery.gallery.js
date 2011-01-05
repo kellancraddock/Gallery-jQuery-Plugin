@@ -172,7 +172,7 @@
 
 					var viewBoxWidth = 0;
 					visibleElements.each(function() {
-						viewBoxWidth += $(this).outerWidth(true) + (parseInt($(this).css('borderLeftWidth')) + parseInt($(this).css('borderRightWidth')) );
+						viewBoxWidth += $(this).outerWidth(true);
 					});
 					self.viewBoxWidth = viewBoxWidth;
 					break;
