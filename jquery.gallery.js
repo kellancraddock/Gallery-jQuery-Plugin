@@ -171,10 +171,13 @@
 					var visibleElements = $(self.options.items, self.gallery).slice(activeEq, activeEq + self.options.itemsVisible);
 
 					var viewBoxWidth = 0;
+					var firstMarginLeft = parseInt(visibleElements.eq(0).css('marginLeft')); //Factor in first and last item margins
+					var lastMarginRight = parseInt(visibleElements.last().css('marginRight'));
+
 					visibleElements.each(function() {
 						viewBoxWidth += $(this).outerWidth(true);
 					});
-					self.viewBoxWidth = viewBoxWidth;
+					self.viewBoxWidth = viewBoxWidth - (firstMarginLeft + lastMarginRight); //Set the view box width minus the first and last viewable items margins
 					break;
 				case 'string':
 					if (self.options.itemsVisible.toLowerCase() == 'all' || self.options.itemsVisible == '*') {
