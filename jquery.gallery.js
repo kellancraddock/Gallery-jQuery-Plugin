@@ -317,7 +317,7 @@
 					duration: self.options.animationDuration,
 					queue: true,
 					easing: self.options.animationEasing,
-					complete:  self.options.onMoveComplete()
+					complete: self.options.onMoveComplete
 				});
 				//Get the viewbox height
 				self.setViewBoxWidth();
