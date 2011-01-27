@@ -160,6 +160,43 @@
 			}
 			//Check for ability to drag an item
 			if (self.options.draggable) { self.setDraggable(); }
+			
+			// TODO: TEMP PLACEMENT FOR NOW
+			self.setAutomaticRotator();
+		}
+		
+		this.setAutomaticRotator = function(){
+			//set automatic rotater
+			var interval = setInterval(function() {
+				var position =  $(self.options.items, self.gallery).parent().find('.active').prevAll().andSelf().length;
+				var total = $(self.options.items, self.gallery).length;
+
+				if(position == total) {
+					self.moveTo(1);
+				} else {
+					self.moveTo(position+1);
+				}
+			}, 2000); // TODO: MAKE THIS A VARIABLE
+
+			//clear interval if mouse is over but if mouse off, reset interval
+/*
+			$('#story .content > .galleryWrapper, #story .nav-items a').bind('mousemove', function(e) {
+				clearInterval(interval);
+			}).bind('mouseleave', function(e) {
+				clearInterval(interval);
+				interval = setInterval(function() {
+					if($('#mainNav li.active').length == 0) {
+						var position = $('#story .content > .galleryWrapper > ul > .active').prevAll().andSelf().length;
+						var total = $('#story .content > .galleryWrapper > ul > li').length;
+						if(position == total) {
+							$('#story .content > .galleryWrapper > ul').data('gallery').moveTo(1);
+						} else {
+							$('#story .content > .galleryWrapper > ul').data('gallery').moveTo(position+1);
+						}
+					}
+				}, 8000);
+			});
+*/
 		}
 		
 		this.setViewBoxWidth = function() {
