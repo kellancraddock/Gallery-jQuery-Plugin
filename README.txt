@@ -1,5 +1,5 @@
 **************************************
-Expand/Collapse - jQuery plugin
+Gallery - jQuery plugin
 Description: This plugin creates an animated, draggable gallery
 Author: Kellan Craddock
 Collaborator: Jessica Tsuji
