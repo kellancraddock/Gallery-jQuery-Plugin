@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<title></title>
+	
+	<!-- CSS -->
+	<style type="text/css">
+		.galleryWrapper {
+			overflow: hidden;
+		}
+		ul {
+			list-style: none;
+			overflow: hidden;
+		}
+		ul li {
+			width: 200px;
+			height: 200px;
+			float: left;
+			background: #ccc;
+			margin-right: 10px;
+		}
+	</style>
+	
+	<!-- JS libraries -->
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+	<!-- JS plugins -->	
+	<script type="text/javascript" src="../jquery.gallery.js"></script>
+	<!-- JS Helpers -->
+	
+	<!-- JS MVC -->
+	
+	<!-- JS scripts -->
+	<script type="text/javascript">
+		$(function() {
+			$('ul').gallery({
+				items: 'li',
+				itemsVisible: 2,
+				draggable: false
+			});
+			$('ul').data('gallery').moveTo(1);
+		});
+	</script>
+
+</head>
+
+<body>
+	<ul>
+		<li>
+			<p>Slide 1</p>
+		</li>
+		<li>
+			<p>Slide 2</p>
+		</li>
+		<li>
+			<p>Slide 3</p>
+		</li>
+		<li>
+			<p>Slide 4</p>
+		</li>
+	</ul>
+</body>
+</html>
