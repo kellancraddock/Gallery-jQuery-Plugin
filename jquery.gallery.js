@@ -55,6 +55,7 @@
 		this.gallery;
 		this.viewBoxWidth;
 		this.galleryWrapper;
+		this.paginationNav;
 		
 		//Defaults
 		this.defaults = {
@@ -71,6 +72,10 @@
 			animate: true, //Does the gallery animate on move
 			animationDuration: 500, //Animation duration
 			animationEasing: 'swing', //Animation easing (using jquery easing plugin)
+			autoRotate: false, // Set auto rotation boolean
+			autoRotateDuration: 5000, // the default auto rotate duration
+			pagination: false, // set the pagination boolean to default false
+			paginationNavClass: 'paginationNav', //Class used for the 'viewbox' or gallery wrapper
 			onMove: function() {}, //On gallery move callback
 			onMoveComplete: function() {}, //On move complete callback
 			onItemRemove: function() {}, //On Item remove callback
@@ -161,11 +166,37 @@
 			//Check for ability to drag an item
 			if (self.options.draggable) { self.setDraggable(); }
 			
-			// TODO: TEMP PLACEMENT FOR NOW
-			self.setAutomaticRotator();
+			//Check for auto rotate functionality boolean
+			if( self.options.autoRotate ) self.setAutomaticRotator();
+
+			//Check for pagination functionality boolean
+			if( self.options.pagination ) self.createPagination();
 		}
 		
-		this.setAutomaticRotator = function(){
+		this.createPagination = function() {
+			var navMarkup = "";
+			navMarkup += "<ul class='" + self.options.paginationNavClass + "'></ul>";
+			self.galleryWrapper.append( navMarkup );
+
+			// store the pagination nav
+			self.paginationNav = $('.' + self.options.paginationNavClass, self.galleryWrapper);
+
+			// create the nav bar markup based on the amount of gallery items in the markup
+			var markup = "";
+			$(self.options.items, self.gallery).each(function(index,item){
+				markup += (index==0) ? '<li class="active"><a href="#">' + (index+1) + '</a></li>' : '<li><a href="#">' + (index+1) + '</a></li>';
+			});
+		
+			$(self.paginationNav).html(markup);
+			
+			$(self.paginationNav).find('a').bind('click', function(e) {
+				var currSelected = $(this).parent().index() + 1;
+				self.moveTo(currSelected);
+			});
+
+		}
+		
+		this.setAutomaticRotator = function() {
 			//set automatic rotater
 			var interval = setInterval(function() {
 				var position =  $(self.options.items, self.gallery).parent().find('.active').prevAll().andSelf().length;
@@ -176,27 +207,27 @@
 				} else {
 					self.moveTo(position+1);
 				}
-			}, 2000); // TODO: MAKE THIS A VARIABLE
+			}, self.options.autoRotateDuration);
 
 			//clear interval if mouse is over but if mouse off, reset interval
-/*
-			$('#story .content > .galleryWrapper, #story .nav-items a').bind('mousemove', function(e) {
+
+			//$('#story .content > .galleryWrapper, #story .nav-items a').bind('mousemove', function(e) {
+			$(self.galleryWrapper).bind('mousemove', function(e) {
 				clearInterval(interval);
 			}).bind('mouseleave', function(e) {
 				clearInterval(interval);
 				interval = setInterval(function() {
-					if($('#mainNav li.active').length == 0) {
-						var position = $('#story .content > .galleryWrapper > ul > .active').prevAll().andSelf().length;
-						var total = $('#story .content > .galleryWrapper > ul > li').length;
-						if(position == total) {
-							$('#story .content > .galleryWrapper > ul').data('gallery').moveTo(1);
-						} else {
-							$('#story .content > .galleryWrapper > ul').data('gallery').moveTo(position+1);
-						}
+					var position =  $(self.options.items, self.gallery).parent().find('.active').prevAll().andSelf().length;
+					var total = $(self.options.items, self.gallery).length;
+
+					if(position == total) {
+						self.moveTo(1);
+					} else {
+						self.moveTo(position+1);
 					}
-				}, 8000);
+				}, self.options.autoRotateDuration);
 			});
-*/
+
 		}
 		
 		this.setViewBoxWidth = function() {
@@ -311,6 +342,14 @@
 			//Update the controls to enable and disable visually
 			var controls = { prevCount: element.prevAll().length, nextCount: element.nextAll().length };
 			self.updateControls(controls);
+			
+			//Update the pagination nav
+			var currentIndex = element.index();
+			self.updatePaginationNav( currentIndex  );
+		}
+		
+		this.updatePaginationNav = function( currIndex ) {
+			self.paginationNav.find('li').removeClass('active').eq(currIndex).addClass('active');
 		}
 		
 		this.updateControls = function(controls) {
