@@ -166,20 +166,20 @@
 			//Check for ability to drag an item
 			if (self.options.draggable) { self.setDraggable(); }
 			
-			//Check for auto rotate functionality boolean
-			if( self.options.autoRotate ) self.setAutomaticRotator();
-
 			//Check for pagination functionality boolean
 			if( self.options.pagination ) self.createPagination();
+
+			//Check for auto rotate functionality boolean
+			if( self.options.autoRotate ) self.setAutomaticRotator();
 		}
 		
 		this.createPagination = function() {
 			var navMarkup = "";
 			navMarkup += "<ul class='" + self.options.paginationNavClass + "'></ul>";
-			self.galleryWrapper.append( navMarkup );
+			self.galleryWrapper.parent().prepend( navMarkup );
 
 			// store the pagination nav
-			self.paginationNav = $('.' + self.options.paginationNavClass, self.galleryWrapper);
+			self.paginationNav = $('.' + self.options.paginationNavClass);
 
 			// create the nav bar markup based on the amount of gallery items in the markup
 			var markup = "";
@@ -210,9 +210,14 @@
 			}, self.options.autoRotateDuration);
 
 			//clear interval if mouse is over but if mouse off, reset interval
-
-			//$('#story .content > .galleryWrapper, #story .nav-items a').bind('mousemove', function(e) {
-			$(self.galleryWrapper).bind('mousemove', function(e) {
+			var selectorStr = "";
+			if ( self.options.pagination ) {
+				selectorStr += '.' + self.options.galleryClass + ', ' +  '.' + self.options.paginationNavClass;
+			} else {
+				selectorStr += '.' + self.options.galleryClass;
+			}
+			
+			$( selectorStr, self.galleryWrapper.parent() ).bind('mousemove', function(e) { 
 				clearInterval(interval);
 			}).bind('mouseleave', function(e) {
 				clearInterval(interval);
@@ -343,9 +348,11 @@
 			var controls = { prevCount: element.prevAll().length, nextCount: element.nextAll().length };
 			self.updateControls(controls);
 			
-			//Update the pagination nav
-			var currentIndex = element.index();
-			self.updatePaginationNav( currentIndex  );
+			if( self.options.pagination ){
+				//Update the pagination nav
+				var currentIndex = element.index();
+				self.updatePaginationNav( currentIndex  );
+			}
 		}
 		
 		this.updatePaginationNav = function( currIndex ) {
