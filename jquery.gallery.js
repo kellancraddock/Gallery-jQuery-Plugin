@@ -175,7 +175,7 @@
 		
 		this.createPagination = function() {
 			var navMarkup = "";
-			navMarkup += "<ul class='" + self.options.paginationNavClass + "'></ul>";
+			navMarkup += "<div class='" + self.options.paginationNavClass + "'><ul></ul></div>";
 			self.galleryWrapper.parent().prepend( navMarkup );
 
 			// store the pagination nav
@@ -187,7 +187,7 @@
 				markup += (index==0) ? '<li class="active"><a href="#">' + (index+1) + '</a></li>' : '<li><a href="#">' + (index+1) + '</a></li>';
 			});
 		
-			$(self.paginationNav).html(markup);
+			$(self.paginationNav).find('ul').html(markup);
 			
 			$(self.paginationNav).find('a').bind('click', function(e) {
 				var currSelected = $(this).parent().index() + 1;
