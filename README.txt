@@ -25,7 +25,12 @@ Email: kellancraddock@gmail.com
 *
 * Calling a method
 * $('div').data('gallery').moveTo(5);
-
+*
+* Public Methods
+* 
+* $('div').data('gallery').autoRotate(param);
+* The autoRotate method accepts a Boolean or String ('start' or 'stop').
+* Will update the autoRotate setting for the gallery.
 */
 
 

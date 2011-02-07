@@ -17,7 +17,12 @@
 *
 * Calling a method
 * $('div').data('gallery').moveTo(5);
-
+*
+* Public Methods
+* 
+* $('div').data('gallery').autoRotate(param);
+* The autoRotate method accepts a Boolean or String ('start' or 'stop').
+* Will update the autoRotate setting for the gallery.
 */
 //TO DO:
 // Make a remove item method that removes an item based on a number passed in, then make a onRemoveItem callback
@@ -76,6 +81,7 @@
 			autoRotateDuration: 5000, // the default auto rotate duration
 			pagination: false, // set the pagination boolean to default false
 			paginationNavClass: 'paginationNav', //Class used for the 'viewbox' or gallery wrapper
+			onPaginationClick: function() {}, // On pagination click callback
 			onMove: function() {}, //On gallery move callback
 			onMoveComplete: function() {}, //On move complete callback
 			onItemRemove: function() {}, //On Item remove callback
@@ -192,6 +198,8 @@
 			$(self.paginationNav).find('a').bind('click', function(e) {
 				var currSelected = $(this).parent().index() + 1;
 				self.moveTo(currSelected);
+				self.options.onPaginationClick( self.gallery );
+				return false;
 			});
 
 		}
@@ -221,16 +229,18 @@
 				clearInterval(interval);
 			}).bind('mouseleave', function(e) {
 				clearInterval(interval);
-				interval = setInterval(function() {
-					var position =  $(self.options.items, self.gallery).parent().find('.active').prevAll().andSelf().length;
-					var total = $(self.options.items, self.gallery).length;
+				if( self.options.autoRotate ){
+					interval = setInterval(function() {
+						var position =  $(self.options.items, self.gallery).parent().find('.active').prevAll().andSelf().length;
+						var total = $(self.options.items, self.gallery).length;
 
-					if(position == total) {
-						self.moveTo(1);
-					} else {
-						self.moveTo(position+1);
-					}
-				}, self.options.autoRotateDuration);
+						if(position == total) {
+							self.moveTo(1);
+						} else {
+							self.moveTo(position+1);
+						}
+					}, self.options.autoRotateDuration);
+				}
 			});
 
 		}
@@ -298,6 +308,34 @@
 			}
 		}
 		
+		/**
+		 * @public autoRotate Public method that updates the autoRotate setting.
+		 * @param {Boolean/String} setting The setting we'll use to update our autoslide setting.
+		 */
+		this.autoRotate = function(setting) {
+			var autoRotateSetting;
+
+			switch(typeof(setting)){
+				case 'boolean':
+				  autoRotateSetting = setting;
+				  break;
+				case 'string':
+				  if (setting == 'start') {	
+					autoRotateSetting = true;
+				  } else if (setting == 'stop') {
+					autoRotateSetting = false;
+				  }
+				  break;
+				default:
+				  return false;
+			}
+			
+			//If there is no element available to move to, then return false
+			if (!element) {return false}
+			
+			self.options.autoRotate = autoRotateSetting;
+		}
+
 		//moveTo method- resets the active item. Takes an object, number, or 'next' & 'back'
 		this.moveTo = function(item, animate) {
 			var animate = (animate == undefined) ? true : animate;
