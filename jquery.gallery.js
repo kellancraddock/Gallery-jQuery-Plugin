@@ -17,7 +17,7 @@
 *
 * Calling a method
 * $('div').data('gallery').moveTo(5);
-
+*
 */
 //TO DO:
 // Make a remove item method that removes an item based on a number passed in, then make a onRemoveItem callback
