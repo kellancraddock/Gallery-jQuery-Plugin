@@ -265,7 +265,9 @@
 				case 'string':
 					if (self.options.itemsVisible.toLowerCase() == 'all' || self.options.itemsVisible == '*') {
 						self.viewBoxWidth = $(self.options.items, self.gallery).length * $(self.options.items, self.gallery).eq(0).outerWidth(true) + (parseInt($(self.gallery).css('marginLeft')) + parseInt($(self.gallery).css('marginRight')) ) + (parseInt($(self.gallery).css('borderLeftWidth'), 10) + parseInt($(self.gallery).css('borderRightWidth'), 10) );
-					}
+					} else { //Else assume value is an exact width as a string	 	
+			            self.viewBoxWidth = parseInt(self.options.itemsVisible);
+           			}
 					break;
 				default:
 					return false;
@@ -455,6 +457,7 @@
 				});
 			//Else simply set css margin left
 			} else {
+				self.galleryWrapper.css({width: self.viewBoxWidth + 'px'});
 				$(self.gallery).css({marginLeft: margin});
 			}
 				
