@@ -18,6 +18,11 @@
 * Calling a method
 * $('div').data('gallery').moveTo(5);
 *
+* Public Methods
+* 
+* $('div').data('gallery').autoRotate(param);
+* The autoRotate method accepts a Boolean or String ('start' or 'stop').
+* Will update the autoRotate setting for the gallery.
 */
 //TO DO:
 // Make a remove item method that removes an item based on a number passed in, then make a onRemoveItem callback
@@ -55,6 +60,7 @@
 		this.gallery;
 		this.viewBoxWidth;
 		this.galleryWrapper;
+		this.paginationNav;
 		
 		//Defaults
 		this.defaults = {
@@ -71,6 +77,11 @@
 			animate: true, //Does the gallery animate on move
 			animationDuration: 500, //Animation duration
 			animationEasing: 'swing', //Animation easing (using jquery easing plugin)
+			autoRotate: false, // Set auto rotation boolean
+			autoRotateDuration: 5000, // the default auto rotate duration
+			pagination: false, // set the pagination boolean to default false
+			paginationNavClass: 'paginationNav', //Class used for the 'viewbox' or gallery wrapper
+			onPaginationClick: function() {}, // On pagination click callback
 			onMove: function() {}, //On gallery move callback
 			onMoveComplete: function() {}, //On move complete callback
 			onItemRemove: function() {}, //On Item remove callback
@@ -160,6 +171,78 @@
 			}
 			//Check for ability to drag an item
 			if (self.options.draggable) { self.setDraggable(); }
+			
+			//Check for pagination functionality boolean
+			if( self.options.pagination ) self.createPagination();
+
+			//Check for auto rotate functionality boolean
+			if( self.options.autoRotate ) self.setAutomaticRotator();
+		}
+		
+		this.createPagination = function() {
+			var navMarkup = "";
+			navMarkup += "<div class='" + self.options.paginationNavClass + "'><ul></ul></div>";
+			self.galleryWrapper.parent().prepend( navMarkup );
+
+			// store the pagination nav
+			self.paginationNav = $('.' + self.options.paginationNavClass);
+
+			// create the nav bar markup based on the amount of gallery items in the markup
+			var markup = "";
+			$(self.options.items, self.gallery).each(function(index,item){
+				markup += (index==0) ? '<li class="active"><a href="#">' + (index+1) + '</a></li>' : '<li><a href="#">' + (index+1) + '</a></li>';
+			});
+		
+			$(self.paginationNav).find('ul').html(markup);
+			
+			$(self.paginationNav).find('a').bind('click', function(e) {
+				var currSelected = $(this).parent().index() + 1;
+				self.moveTo(currSelected);
+				self.options.onPaginationClick( self.gallery );
+				return false;
+			});
+
+		}
+		
+		this.setAutomaticRotator = function() {
+			//set automatic rotater
+			var interval = setInterval(function() {
+				var position =  $(self.options.items, self.gallery).parent().find('.active').prevAll().andSelf().length;
+				var total = $(self.options.items, self.gallery).length;
+
+				if(position == total) {
+					self.moveTo(1);
+				} else {
+					self.moveTo(position+1);
+				}
+			}, self.options.autoRotateDuration);
+
+			//clear interval if mouse is over but if mouse off, reset interval
+			var selectorStr = "";
+			if ( self.options.pagination ) {
+				selectorStr += '.' + self.options.galleryClass + ', ' +  '.' + self.options.paginationNavClass;
+			} else {
+				selectorStr += '.' + self.options.galleryClass;
+			}
+			
+			$( selectorStr, self.galleryWrapper.parent() ).bind('mousemove', function(e) { 
+				clearInterval(interval);
+			}).bind('mouseleave', function(e) {
+				clearInterval(interval);
+				if( self.options.autoRotate ){
+					interval = setInterval(function() {
+						var position =  $(self.options.items, self.gallery).parent().find('.active').prevAll().andSelf().length;
+						var total = $(self.options.items, self.gallery).length;
+
+						if(position == total) {
+							self.moveTo(1);
+						} else {
+							self.moveTo(position+1);
+						}
+					}, self.options.autoRotateDuration);
+				}
+			});
+
 		}
 		
 		this.setViewBoxWidth = function() {
@@ -182,8 +265,6 @@
 				case 'string':
 					if (self.options.itemsVisible.toLowerCase() == 'all' || self.options.itemsVisible == '*') {
 						self.viewBoxWidth = $(self.options.items, self.gallery).length * $(self.options.items, self.gallery).eq(0).outerWidth(true) + (parseInt($(self.gallery).css('marginLeft')) + parseInt($(self.gallery).css('marginRight')) ) + (parseInt($(self.gallery).css('borderLeftWidth'), 10) + parseInt($(self.gallery).css('borderRightWidth'), 10) );
-					} else { //Else assume value is an exact width as a string
-						self.viewBoxWidth = parseInt(self.options.itemsVisible);
 					}
 					break;
 				default:
@@ -227,6 +308,34 @@
 			}
 		}
 		
+		/**
+		 * @public autoRotate Public method that updates the autoRotate setting.
+		 * @param {Boolean/String} setting The setting we'll use to update our autoslide setting.
+		 */
+		this.autoRotate = function(setting) {
+			var autoRotateSetting;
+
+			switch(typeof(setting)){
+				case 'boolean':
+				  autoRotateSetting = setting;
+				  break;
+				case 'string':
+				  if (setting == 'start') {	
+					autoRotateSetting = true;
+				  } else if (setting == 'stop') {
+					autoRotateSetting = false;
+				  }
+				  break;
+				default:
+				  return false;
+			}
+			
+			//If there is no element available to move to, then return false
+			if (!element) {return false}
+			
+			self.options.autoRotate = autoRotateSetting;
+		}
+
 		//moveTo method- resets the active item. Takes an object, number, or 'next' & 'back'
 		this.moveTo = function(item, animate) {
 			var animate = (animate == undefined) ? true : animate;
@@ -276,6 +385,16 @@
 			//Update the controls to enable and disable visually
 			var controls = { prevCount: element.prevAll().length, nextCount: element.nextAll().length };
 			self.updateControls(controls);
+			
+			if( self.options.pagination ){
+				//Update the pagination nav
+				var currentIndex = element.index();
+				self.updatePaginationNav( currentIndex  );
+			}
+		}
+		
+		this.updatePaginationNav = function( currIndex ) {
+			self.paginationNav.find('li').removeClass('active').eq(currIndex).addClass('active');
 		}
 		
 		this.updateControls = function(controls) {
@@ -336,7 +455,6 @@
 				});
 			//Else simply set css margin left
 			} else {
-				self.galleryWrapper.css({width: self.viewBoxWidth + 'px'});
 				$(self.gallery).css({marginLeft: margin});
 			}
 				
